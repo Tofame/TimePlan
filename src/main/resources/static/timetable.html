@@ -38,6 +38,11 @@
 </head>
 <body>
 <h1>Weekly Timetable</h1>
+<div style="margin-bottom: 15px;">
+    <button id="prevWeek">&lt; Previous Week</button>
+    <span id="currentWeekLabel" style="margin: 0 10px; font-weight: bold;"></span>
+    <button id="nextWeek">Next Week &gt;</button>
+</div>
 <table id="timetable">
     <thead>
     <tr>
@@ -56,8 +61,34 @@
 <script>
     const hours = Array.from({ length: 11 }, (_, i) => 8 + i); // 08:00–18:00
 
+    // Start with current week (Monday)
+    let currentWeekMonday = getMonday(new Date());
+
+    function getMonday(d) {
+        const date = new Date(d);
+        const day = date.getDay();
+        const diff = (day === 0 ? -6 : 1) - day; // adjust if Sunday (0) to Monday
+        date.setDate(date.getDate() + diff);
+        date.setHours(0, 0, 0, 0);
+        return date;
+    }
+
+    function formatDate(date) {
+        return date.toISOString().slice(0, 10);
+    }
+
+    function updateWeekLabel() {
+        const mondayStr = formatDate(currentWeekMonday);
+        const friday = new Date(currentWeekMonday);
+        friday.setDate(friday.getDate() + 4);
+        const fridayStr = formatDate(friday);
+        document.getElementById('currentWeekLabel').textContent = `${mondayStr} - ${fridayStr}`;
+    }
+
     function createEmptyGrid() {
         const tbody = document.getElementById("timetable-body");
+        tbody.innerHTML = ""; // Clear previous grid
+
         hours.forEach(hour => {
             const tr = document.createElement("tr");
             const timeCell = document.createElement("td");
@@ -79,37 +110,63 @@
         const res = await fetch("/timetable");
         const activities = await res.json();
 
+        // Clear previous activities from grid
+        document.querySelectorAll('.activity').forEach(el => el.remove());
+
         activities.forEach(activity => {
             const start = new Date(activity.start_time);
-            const day = start.getDay(); // 0 = Sunday, 1 = Monday
-            const hour = Math.floor(start.getHours());
 
-            console.log("Activity:", activity);
-            console.log("Resolved day:", day, "hour:", hour);
+            // Check if activity is within current week (Monday to Friday)
+            if (!isInCurrentWeek(start)) return;
+
+            const day = start.getDay(); // 1 (Mon) - 5 (Fri)
+            const hour = start.getHours();
 
             if (day < 1 || day > 5) return;
 
             const selector = `td[data-day="${day - 1}"][data-hour="${hour}"]`;
-            console.log("Selector:", selector);
-
             const cell = document.querySelector(selector);
 
             if (cell) {
                 const div = document.createElement("div");
                 div.className = "activity";
                 div.innerHTML = `
-            <strong>${activity.subject?.name || 'N/A'}</strong><br>
-            ${activity.teacher?.name || ''}<br>
-            Room: ${activity.classroom?.adress || 'N/A'}
-        `;
+                    <strong>${activity.subject?.name || 'N/A'}</strong><br>
+                    ${activity.teacher?.name || ''}<br>
+                    Room: ${activity.classroom?.adress || 'N/A'}
+                `;
                 cell.appendChild(div);
-            } else {
-                console.warn("No cell found for", selector);
             }
         });
     }
 
+    function isInCurrentWeek(date) {
+        const monday = currentWeekMonday;
+        const friday = new Date(monday);
+        friday.setDate(friday.getDate() + 4);
+
+        // Compare only date part ignoring time
+        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        return d >= monday && d <= friday;
+    }
+
+    // Handlers for buttons
+    document.getElementById('prevWeek').addEventListener('click', () => {
+        currentWeekMonday.setDate(currentWeekMonday.getDate() - 7);
+        updateWeekLabel();
+        createEmptyGrid();
+        loadActivities();
+    });
+
+    document.getElementById('nextWeek').addEventListener('click', () => {
+        currentWeekMonday.setDate(currentWeekMonday.getDate() + 7);
+        updateWeekLabel();
+        createEmptyGrid();
+        loadActivities();
+    });
+
     window.onload = () => {
+        updateWeekLabel();
         createEmptyGrid();
         loadActivities();
     };
