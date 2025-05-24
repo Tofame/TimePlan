@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Timetable</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            text-align: center;
+            vertical-align: top;
+            height: 60px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .activity {
+            background-color: #d9edf7;
+            border: 1px solid #bce8f1;
+            padding: 4px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<h1>Weekly Timetable</h1>
+<table id="timetable">
+    <thead>
+    <tr>
+        <th>Time</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+    </tr>
+    </thead>
+    <tbody id="timetable-body">
+    </tbody>
+</table>
+
+<script>
+    const hours = Array.from({ length: 11 }, (_, i) => 8 + i); // 08:00–18:00
+
+    function createEmptyGrid() {
+        const tbody = document.getElementById("timetable-body");
+        hours.forEach(hour => {
+            const tr = document.createElement("tr");
+            const timeCell = document.createElement("td");
+            timeCell.textContent = `${hour}:00`;
+            tr.appendChild(timeCell);
+
+            for (let i = 0; i < 5; i++) {
+                const td = document.createElement("td");
+                td.dataset.day = i;
+                td.dataset.hour = hour;
+                tr.appendChild(td);
+            }
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function loadActivities() {
+        const res = await fetch("/timetable");
+        const activities = await res.json();
+
+        activities.forEach(activity => {
+            const start = new Date(activity.start_time);
+            const day = start.getDay(); // 0 = Sunday, 1 = Monday
+            const hour = Math.floor(start.getHours());
+
+            console.log("Activity:", activity);
+            console.log("Resolved day:", day, "hour:", hour);
+
+            if (day < 1 || day > 5) return;
+
+            const selector = `td[data-day="${day - 1}"][data-hour="${hour}"]`;
+            console.log("Selector:", selector);
+
+            const cell = document.querySelector(selector);
+
+            if (cell) {
+                const div = document.createElement("div");
+                div.className = "activity";
+                div.innerHTML = `
+            <strong>${activity.subject?.name || 'N/A'}</strong><br>
+            ${activity.teacher?.name || ''}<br>
+            Room: ${activity.classroom?.adress || 'N/A'}
+        `;
+                cell.appendChild(div);
+            } else {
+                console.warn("No cell found for", selector);
+            }
+        });
+    }
+
+    window.onload = () => {
+        createEmptyGrid();
+        loadActivities();
+    };
+</script>
+</body>
+</html>
