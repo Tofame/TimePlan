@@ -1,9 +1,6 @@
 package com.studencki.TimePlan.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,5 +19,6 @@ public class Subject {
     private Long id;
     private String name;
     private int etcs;
-    private String code_name;
+    @Column(name = "code_name")
+    private String codeName;
 }

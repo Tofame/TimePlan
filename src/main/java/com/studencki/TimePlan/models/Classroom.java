@@ -17,5 +17,5 @@ public class Classroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String adress; // A/360 (building and room)
+    private String address; // A/360 (building and room)
 }

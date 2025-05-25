@@ -40,7 +40,7 @@ public class SubjectService {
         return subjectRepository.findById(id).map(existingSubject -> {
             existingSubject.setName(updatedSubject.getName());
             existingSubject.setEtcs(updatedSubject.getEtcs());
-            existingSubject.setCode_name(updatedSubject.getCode_name());
+            existingSubject.setCodeName(updatedSubject.getCodeName());
             return subjectRepository.save(existingSubject);
         });
     }

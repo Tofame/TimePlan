@@ -38,7 +38,7 @@ public class ClassroomService {
 
     public Optional<Classroom> editClassroom(Long id, Classroom updatedClassroom) {
         return classroomRepository.findById(id).map(classroom -> {
-            classroom.setAdress(updatedClassroom.getAdress());
+            classroom.setAddress(updatedClassroom.getAddress());
             return classroomRepository.save(classroom);
         });
     }

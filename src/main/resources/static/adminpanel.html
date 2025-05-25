@@ -81,9 +81,9 @@
     <form id="add-student-form">
         <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
         <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="student_index" placeholder="Student Index" required />
-        <input type="number" name="group_lesson" placeholder="Group Lesson" />
-        <input type="number" name="group_lecture" placeholder="Group Lecture" />
+        <input type="text" name="studentIndex" placeholder="Student Index" required />
+        <input type="number" name="groupLesson" placeholder="Group Lesson" />
+        <input type="number" name="groupLecture" placeholder="Group Lecture" />
         <button type="submit" id="student-submit-btn">Add Student</button>
         <button type="button" id="student-cancel-btn" style="display:none;">Cancel</button>
     </form>
@@ -95,7 +95,7 @@
     <h2>Subjects</h2>
     <form id="add-subject-form">
         <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="code_name" placeholder="Code Name" required />
+        <input type="text" name="codeName" placeholder="Code Name" required />
         <input type="number" name="etcs" placeholder="ETCS" />
         <button type="submit">Add Subject</button>
     </form>
@@ -106,7 +106,7 @@
 <section>
     <h2>Classrooms</h2>
     <form id="add-classroom-form">
-        <input type="text" name="adress" placeholder="Address" required />
+        <input type="text" name="address" placeholder="Address" required />
         <button type="submit">Add Classroom</button>
     </form>
     <ul id="classrooms-list" class="scrollable"></ul>
@@ -119,8 +119,8 @@
         <select name="subject_id"></select>
         <select name="teacher_id"></select>
         <select name="classroom_id"></select>
-        <label for="start_time">Start Time:</label>
-        <input type="text" id="start_time" name="start_time" required>
+        <label for="startTime">Start Time:</label>
+        <input type="text" id="startTime" name="startTime" required>
         <input type="number" name="duration" placeholder="Duration (minutes)" required />
         <select name="activity_type">
             <option value="">Select Activity Type</option>
@@ -138,8 +138,8 @@
 
         <div style="margin-top: 10px;">
             <strong>Sort by:</strong>
-            <button onclick="sortActivities('start_time')">Date</button>
-            <button onclick="sortActivities('subject.code_name')">Subject Code</button>
+            <button onclick="sortActivities('startTime')">Date</button>
+            <button onclick="sortActivities('subject.codeName')">Subject Code</button>
             <button onclick="toggleSortDirection()">Toggle ↑↓</button>
         </div>
     </div>
@@ -149,7 +149,7 @@
 </section>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        flatpickr("#start_time", {
+        flatpickr("#startTime", {
             enableTime: true,
             dateFormat: "Y-m-d\\TH:i",
             time_24hr: true
@@ -270,7 +270,7 @@
         const list = await res.json();
         const ul = document.getElementById("students-list");
         ul.innerHTML = list.map(s =>
-            `<li>${s.name} (Index: ${s.student_index}) — Lesson Group: ${s.group_lesson}, Lecture Group: ${s.group_lecture}
+            `<li>${s.name} (Index: ${s.studentIndex}) — Lesson Group: ${s.groupLesson}, Lecture Group: ${s.groupLecture}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
             <button class="delete-btn" data-id="${s.id}" data-type="students">Delete</button></li>`
         ).join("");
@@ -289,9 +289,9 @@
         const id = formData.get("id");
         const data = {
             name: formData.get("name"),
-            student_index: formData.get("student_index"),
-            group_lesson: formData.get("group_lesson") ? Number(formData.get("group_lesson")) : null,
-            group_lecture: formData.get("group_lecture") ? Number(formData.get("group_lecture")) : null
+            studentIndex: formData.get("studentIndex"),
+            groupLesson: formData.get("groupLesson") ? Number(formData.get("groupLesson")) : null,
+            groupLecture: formData.get("groupLecture") ? Number(formData.get("groupLecture")) : null
         };
 
         if (id) {
@@ -326,9 +326,9 @@
             if (student) {
                 studentForm.id.value = student.id;
                 studentForm.name.value = student.name;
-                studentForm.student_index.value = student.student_index;
-                studentForm.group_lesson.value = student.group_lesson || "";
-                studentForm.group_lecture.value = student.group_lecture || "";
+                studentForm.studentIndex.value = student.studentIndex;
+                studentForm.groupLesson.value = student.groupLesson || "";
+                studentForm.groupLecture.value = student.groupLecture || "";
                 studentSubmitBtn.textContent = "Update Student";
                 studentCancelBtn.style.display = "inline-block";
             }
@@ -344,7 +344,7 @@
         const list = await res.json();
         subjectsList.innerHTML = list.map(s =>
             `<li>
-            ${s.name} (${s.code_name}), ETCS: ${s.etcs}
+            ${s.name} (${s.codeName}), ETCS: ${s.etcs}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
             <button class="delete-btn" data-id="${s.id}" data-type="subjects">Delete</button>
             </li>`
@@ -363,7 +363,7 @@
         const id = subjectForm.dataset.id;
         const data = {
             name: formData.get("name"),
-            code_name: formData.get("code_name"),
+            codeName: formData.get("codeName"),
             etcs: formData.get("etcs") ? Number(formData.get("etcs")) : 0
         };
 
@@ -395,7 +395,7 @@
             const subject = subjects.find(s => s.id == id);
             if (subject) {
                 subjectForm.name.value = subject.name;
-                subjectForm.code_name.value = subject.code_name;
+                subjectForm.codeName.value = subject.codeName;
                 subjectForm.etcs.value = subject.etcs || "";
                 subjectForm.dataset.id = id;
                 subjectForm.querySelector("button[type='submit']").textContent = "Update Subject";
@@ -411,7 +411,7 @@
         const res = await fetch("/data/classrooms");
         const list = await res.json();
         classroomsList.innerHTML = list.map(c =>
-            `<li>${c.adress}
+            `<li>${c.address}
         <button class="edit-btn" data-id="${c.id}">Edit</button>
         <button class="delete-btn" data-id="${c.id}" data-type="classrooms">Delete</button></li>`
         ).join("");
@@ -428,7 +428,7 @@
         const formData = new FormData(classroomForm);
         const id = classroomForm.dataset.id;
         const data = {
-            adress: formData.get("adress"),
+            address: formData.get("address"),
         };
 
         if (id) {
@@ -458,7 +458,7 @@
             const classrooms = await res.json();
             const classroom = classrooms.find(c => c.id == id);
             if (classroom) {
-                classroomForm.adress.value = classroom.adress;
+                classroomForm.address.value = classroom.address;
                 classroomForm.dataset.id = id;
                 classroomForm.querySelector("button[type='submit']").textContent = "Update Classroom";
             }
@@ -473,10 +473,10 @@
             subject_id: formData.get("subject_id") ? Number(formData.get("subject_id")) : null,
             teacher_id: formData.get("teacher_id") ? Number(formData.get("teacher_id")) : null,
             classroom_id: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
-            start_time: formData.get("start_time"),
+            startTime: formData.get("startTime"),
             duration: formData.get("duration") ? Number(formData.get("duration")) : null,
             type: formData.get("activity_type") ? Number(formData.get("activity_type")) : 0,
-            group_number: formData.get("group_number") ? Number(formData.get("group_number")) : null,
+            groupNumber: formData.get("groupNumber") ? Number(formData.get("groupNumber")) : null,
         };
 
         await fetch("/data/activities", {
@@ -490,7 +490,7 @@
     };
 
     let allActivities = [];
-    let sortField = 'start_time';
+    let sortField = 'startTime';
     let sortAsc = true;
 
     async function loadActivities() {
@@ -505,11 +505,11 @@
         let filtered = [...allActivities];
 
         if (date) {
-            filtered = filtered.filter(a => a.start_time.startsWith(date));
+            filtered = filtered.filter(a => a.startTime.startsWith(date));
         }
 
         if (code) {
-            filtered = filtered.filter(a => (a.subject?.code_name || '').toLowerCase().includes(code));
+            filtered = filtered.filter(a => (a.subject?.codeName || '').toLowerCase().includes(code));
         }
 
         renderActivities(filtered);
@@ -551,9 +551,9 @@
             const li = document.createElement('li');
             li.innerHTML = `
           <strong>${a.subject?.name || 'No subject'}</strong>
-          (${a.subject?.code_name || '-'}) — ${new Date(a.start_time).toLocaleString()}
+          (${a.subject?.codeName || '-'}) — ${new Date(a.startTime).toLocaleString()}
           <br>
-          <small>${a.type || ''} with ${a.teacher?.name || 'N/A'} in ${a.classroom?.adress || 'N/A'} (${a.duration || 0} mins)</small>
+          <small>${a.type || ''} with ${a.teacher?.name || 'N/A'} in ${a.classroom?.address || 'N/A'} (${a.duration || 0} mins)</small>
           <button class="delete-btn" data-id="${a.id}" data-type="activities">Delete</button>
         `;
             listEl.appendChild(li);
@@ -575,7 +575,7 @@
         // Populate subjects dropdown
         const subjectSelect = document.querySelector('select[name="subject_id"]');
         subjectSelect.innerHTML = '<option value="">Select Subject</option>' + subjects.map(s =>
-            `<option value="${s.id}">${s.name} (${s.code_name})</option>`
+            `<option value="${s.id}">${s.name} (${s.codeName})</option>`
         ).join('');
 
         // Populate teachers dropdown
@@ -587,7 +587,7 @@
         // Populate classrooms dropdown
         const classroomSelect = document.querySelector('select[name="classroom_id"]');
         classroomSelect.innerHTML = '<option value="">Select Classroom</option>' + classrooms.map(c =>
-            `<option value="${c.id}">${c.adress}</option>`
+            `<option value="${c.id}">${c.address}</option>`
         ).join('');
 
         const activityTypeSelect = document.querySelector('select[name="activity_type"]');

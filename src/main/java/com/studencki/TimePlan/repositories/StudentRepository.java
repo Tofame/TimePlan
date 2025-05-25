@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByName(String name);
     List<Student> findByNameStartingWithIgnoreCase(String prefix);
-    int countByGroupLecture(int group_number);
-    int countByGroupLesson(int group_number);
+    int countByGroupLecture(int groupNumber);
+    int countByGroupLesson(int groupNumber);
     Optional<Student> findByStudentIndexAndPassword(String studentIndex, String password);
     Optional<Student> findByStudentIndex(String studentIndex);
 }

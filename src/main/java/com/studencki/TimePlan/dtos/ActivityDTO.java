@@ -9,8 +9,9 @@ public class ActivityDTO {
     private Long subject_id;
     private Long teacher_id;
     private Long classroom_id;
-    private String start_time;
+    private String startTime;
     private int duration;
     private int type;
-    private Integer group_number;
+
+    private Integer groupNumber;
 }

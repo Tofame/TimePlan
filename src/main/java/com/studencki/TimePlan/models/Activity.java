@@ -36,6 +36,7 @@ public class Activity {
     private Teacher teacher;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime start_time;
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
     private int duration;
 }

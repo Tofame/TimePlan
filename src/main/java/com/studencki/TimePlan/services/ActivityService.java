@@ -50,7 +50,7 @@ public class ActivityService {
             activity.setSubject(updatedActivity.getSubject());
             activity.setClassroom(updatedActivity.getClassroom());
             activity.setTeacher(updatedActivity.getTeacher());
-            activity.setStart_time(updatedActivity.getStart_time());
+            activity.setStartTime(updatedActivity.getStartTime());
             activity.setDuration(updatedActivity.getDuration());
 
             return activityRepository.save(activity);
@@ -75,10 +75,10 @@ public class ActivityService {
         activity.setSubject(subjectRepository.findById(dto.getSubject_id()).orElse(null));
         activity.setTeacher(teacherRepository.findById(dto.getTeacher_id()).orElse(null));
         activity.setClassroom(classroomRepository.findById(dto.getClassroom_id()).orElse(null));
-        activity.setStart_time(LocalDateTime.parse(dto.getStart_time()));
+        activity.setStartTime(LocalDateTime.parse(dto.getStartTime()));
         activity.setDuration(dto.getDuration());
         activity.setType(ActivityType.values()[dto.getType()]);
-        activity.setGroupNumber(dto.getGroup_number() != null ? dto.getGroup_number() : 0);
+        activity.setGroupNumber(dto.getGroupNumber() != null ? dto.getGroupNumber() : 0);
         return activity;
     }
 

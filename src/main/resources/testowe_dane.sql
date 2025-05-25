@@ -31,7 +31,7 @@ INSERT INTO student (name, student_index, group_lesson, group_lecture, password)
 ('Janek Drzemka', 's404', 6, 6, '123');
 
 -- Insert Classrooms
-INSERT INTO classroom (adress) VALUES
+INSERT INTO classroom (address) VALUES
 ('Strefa Chillu A/213'),
 ('Bufet Główny B/007'),
 ('Sala Komputerowa C/101'),
