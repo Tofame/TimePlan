@@ -6,6 +6,7 @@ import com.studencki.TimePlan.repositories.TeacherRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeacherService {
@@ -26,5 +27,26 @@ public class TeacherService {
 
     public List<Teacher> getTeachersByLikeName(String name) {
         return teacherRepository.findByNameStartingWithIgnoreCase(name);
+    }
+
+    public Teacher createTeacher(Teacher teacher) {
+        return teacherRepository.save(teacher);
+    }
+
+    public Optional<Teacher> updateTeacher(Long id, Teacher updatedTeacher) {
+        return teacherRepository.findById(id).map(existing -> {
+            existing.setName(updatedTeacher.getName());
+            existing.setTitle(updatedTeacher.getTitle());
+            existing.setAge(updatedTeacher.getAge());
+            return teacherRepository.save(existing);
+        });
+    }
+
+    public boolean deleteTeacher(Long id) {
+        if (teacherRepository.existsById(id)) {
+            teacherRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

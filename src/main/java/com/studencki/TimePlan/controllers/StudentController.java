@@ -2,10 +2,7 @@ package com.studencki.TimePlan.controllers;
 
 import com.studencki.TimePlan.models.Student;
 import com.studencki.TimePlan.services.StudentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +23,20 @@ public class StudentController {
     @GetMapping("/search")  // Ex: /students/search?name=Zof
     public List<Student> getStudentsByName(@RequestParam String name) {
         return studentService.getStudentsByLikeName(name);
+    }
+
+    @PostMapping
+    public Student addStudent(@RequestBody Student student) {
+        return studentService.addStudent(student);
+    }
+
+    @PutMapping("/{id}")
+    public Student editStudent(@PathVariable Long id, @RequestBody Student updatedStudent) {
+        return studentService.editStudent(id, updatedStudent);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
     }
 }

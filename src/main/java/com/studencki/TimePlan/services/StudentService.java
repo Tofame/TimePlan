@@ -29,4 +29,21 @@ public class StudentService {
     public List<Student> getStudentsByLikeName(String name) {
         return studentRepository.findByNameStartingWithIgnoreCase(name);
     }
+
+    public Student addStudent(Student student) {
+        return studentRepository.save(student);
+    }
+
+    public Student editStudent(Long id, Student updateStudent) {
+        Student existing = studentRepository.findById(id).orElseThrow();
+        existing.setName(updateStudent.getName());
+        existing.setStudent_index(updateStudent.getStudent_index());
+        existing.setGroup_lesson(updateStudent.getGroup_lesson());
+        existing.setGroup_lecture(updateStudent.getGroup_lecture());
+        return studentRepository.save(existing);
+    }
+
+    public void deleteStudent(Long id) {
+        studentRepository.deleteById(id);
+    }
 }
