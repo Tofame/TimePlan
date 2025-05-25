@@ -373,27 +373,66 @@
     };
 
     // Classroom
-    document.getElementById("add-classroom-form").onsubmit = async e => {
+    const classroomForm = document.getElementById("add-classroom-form");
+    const classroomsList = document.getElementById("classrooms-list");
+
+    async function loadClassrooms() {
+        const res = await fetch("/classrooms");
+        const list = await res.json();
+        classroomsList.innerHTML = list.map(c =>
+            `<li>${c.adress}
+        <button class="edit-btn" data-id="${c.id}">Edit</button>
+        <button class="delete-btn" data-id="${c.id}" data-type="classroom">Delete</button></li>`
+        ).join("");
+    }
+
+    function resetClassroomForm() {
+        classroomForm.reset();
+        classroomForm.dataset.id = "";
+        classroomForm.querySelector("button[type='submit']").textContent = "Add Classroom";
+    }
+
+    classroomForm.onsubmit = async e => {
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
-        await fetch("/data/classrooms", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-        e.target.reset();
+        const formData = new FormData(classroomForm);
+        const id = classroomForm.dataset.id;
+        const data = {
+            adress: formData.get("adress"),
+        };
+
+        if (id) {
+            // Edit
+            await fetch(`/classrooms/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            // Add
+            await fetch("/classrooms", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
+
+        resetClassroomForm();
         loadClassrooms();
     };
 
-    async function loadClassrooms() {
-        const res = await fetch("/data/classrooms");
-        const list = await res.json();
-        const ul = document.getElementById("classrooms-list");
-        ul.innerHTML = list.map(c =>
-            `<li>${c.adress}
-         <button class="delete-btn" data-id="${c.id}" data-type="classroom">Delete</button></li>`
-        ).join("");
-    }
+    classroomsList.onclick = async e => {
+        if (e.target.classList.contains("edit-btn")) {
+            const id = e.target.dataset.id;
+            const res = await fetch("/classrooms");
+            const classrooms = await res.json();
+            const classroom = classrooms.find(c => c.id == id);
+            if (classroom) {
+                classroomForm.adress.value = classroom.adress;
+                classroomForm.dataset.id = id;
+                classroomForm.querySelector("button[type='submit']").textContent = "Update Classroom";
+            }
+        }
+    };
 
     // Activities
     document.getElementById("add-activity-form").onsubmit = async e => {
