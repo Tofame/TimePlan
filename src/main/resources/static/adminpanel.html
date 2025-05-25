@@ -305,27 +305,72 @@
     };
 
     // Subject
-    document.getElementById("add-subject-form").onsubmit = async e => {
+    const subjectForm = document.getElementById("add-subject-form");
+    const subjectsList = document.getElementById("subjects-list");
+
+    async function loadSubjects() {
+        const res = await fetch("/subjects");
+        const list = await res.json();
+        subjectsList.innerHTML = list.map(s =>
+            `<li>
+            ${s.name} (${s.code_name}), ETCS: ${s.etcs}
+            <button class="edit-btn" data-id="${s.id}">Edit</button>
+            <button class="delete-btn" data-id="${s.id}" data-type="subject">Delete</button>
+            </li>`
+        ).join("");
+    }
+
+    function resetSubjectForm() {
+        subjectForm.reset();
+        subjectForm.dataset.id = "";
+        subjectForm.querySelector("button[type='submit']").textContent = "Add Subject";
+    }
+
+    subjectForm.onsubmit = async e => {
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
-        await fetch("/data/subjects", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-        e.target.reset();
+        const formData = new FormData(subjectForm);
+        const id = subjectForm.dataset.id;
+        const data = {
+            name: formData.get("name"),
+            code_name: formData.get("code_name"),
+            etcs: formData.get("etcs") ? Number(formData.get("etcs")) : 0
+        };
+
+        if (id) {
+            // Edit
+            await fetch(`/subjects/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            // Add
+            await fetch("/subjects", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
+
+        resetSubjectForm();
         loadSubjects();
     };
 
-    async function loadSubjects() {
-        const res = await fetch("/data/subjects");
-        const list = await res.json();
-        const ul = document.getElementById("subjects-list");
-        ul.innerHTML = list.map(s =>
-            `<li>${s.name} (${s.code_name}), ETCS: ${s.etcs}
-         <button class="delete-btn" data-id="${s.id}" data-type="subject">Delete</button></li>`
-        ).join("");
-    }
+    subjectsList.onclick = async e => {
+        if (e.target.classList.contains("edit-btn")) {
+            const id = e.target.dataset.id;
+            const res = await fetch("/subjects");
+            const subjects = await res.json();
+            const subject = subjects.find(s => s.id == id);
+            if (subject) {
+                subjectForm.name.value = subject.name;
+                subjectForm.code_name.value = subject.code_name;
+                subjectForm.etcs.value = subject.etcs || "";
+                subjectForm.dataset.id = id;
+                subjectForm.querySelector("button[type='submit']").textContent = "Update Subject";
+            }
+        }
+    };
 
     // Classroom
     document.getElementById("add-classroom-form").onsubmit = async e => {
