@@ -61,6 +61,21 @@
 <body>
 <h1>Admin Panel</h1>
 
+<!-- GROUPS -->
+<section>
+    <h2>Activity Groups</h2>
+    <form id="add-group-form">
+        <input type="hidden" name="id" />
+        <label for="type">Activity Type:</label>
+        <input type="number" name="type" placeholder="Type (0 - Lesson, 1 - Lecture)" required min="0" max="1" />
+        <label for="groupNumber">Group Number:</label>
+        <input type="number" name="groupNumber" placeholder="Group Number" required min="0" />
+        <button type="submit" id="group-submit-btn">Add Group</button>
+        <button type="button" id="group-cancel-btn" style="display:none;">Cancel</button>
+    </form>
+    <ul id="groups-list" class="scrollable"></ul>
+</section>
+
 <!-- TEACHERS -->
 <section>
     <h2>Teachers</h2>
@@ -82,8 +97,8 @@
         <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
         <input type="text" name="name" placeholder="Name" required />
         <input type="text" name="studentIndex" placeholder="Student Index" required />
-        <input type="number" name="groupLesson" placeholder="Group Lesson" />
-        <input type="number" name="groupLecture" placeholder="Group Lecture" />
+        <select name="groupLessonId" id="group-lesson-select"></select>
+        <select name="groupLectureId" id="group-lecture-select"></select>
         <button type="submit" id="student-submit-btn">Add Student</button>
         <button type="button" id="student-cancel-btn" style="display:none;">Cancel</button>
     </form>
@@ -168,8 +183,86 @@
             loadSubjects(),
             loadClassrooms(),
             loadActivities(),
+            loadActivitiesGroups(),
             loadActivityDropdowns()
         ]);
+    };
+
+    // Groups
+    const groupForm = document.getElementById("add-group-form");
+    const groupsList = document.getElementById("groups-list");
+    const groupSubmitBtn = document.getElementById("group-submit-btn");
+    const groupCancelBtn = document.getElementById("group-cancel-btn");
+
+    // Load groups
+    async function loadActivitiesGroups() {
+        const res = await fetch("/data/activitiesGroups");
+        const groups = await res.json();
+
+        groupsList.innerHTML = groups.map(g =>
+            `<li>Type: ${g.type} — Group Number: ${g.groupNumber}
+            <button class="edit-btn" data-id="${g.id}">Edit</button>
+            <button class="delete-btn" data-id="${g.id}" data-type="activitiesGroups">Delete</button>
+        </li>`
+        ).join("");
+    }
+
+    function resetGroupForm() {
+        groupForm.reset();
+        groupForm.id.value = "";
+        groupSubmitBtn.textContent = "Add Group";
+        groupCancelBtn.style.display = "none";
+    }
+
+    // Submit handler for add/edit
+    groupForm.onsubmit = async e => {
+        e.preventDefault();
+
+        const formData = new FormData(groupForm);
+        const id = formData.get("id");
+        const data = {
+            type: Number(formData.get("type")),
+            groupNumber: Number(formData.get("groupNumber"))
+        };
+
+        if (id) {
+            // Edit
+            await fetch(`/data/activitiesGroups/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            // Add
+            await fetch("/data/activitiesGroups", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
+
+        resetGroupForm();
+        loadActivitiesGroups();
+    };
+
+    groupCancelBtn.onclick = () => resetGroupForm();
+
+    // Click handlers on groups list for Edit/Delete buttons
+    groupsList.onclick = async e => {
+        if (e.target.classList.contains("edit-btn")) {
+            const id = e.target.dataset.id;
+            const res = await fetch("/data/activitiesGroups");
+            const groups = await res.json();
+            const group = groups.find(g => g.id == id);
+
+            if (group) {
+                groupForm.id.value = group.id;
+                groupForm.type.value = group.type;
+                groupForm.groupNumber.value = group.groupNumber;
+                groupSubmitBtn.textContent = "Update Group";
+                groupCancelBtn.style.display = "inline-block";
+            }
+        }
     };
 
     // Teacher
@@ -273,7 +366,7 @@
         const list = await res.json();
         const ul = document.getElementById("students-list");
         ul.innerHTML = list.map(s =>
-            `<li>${s.name} (Index: ${s.studentIndex}) — Lesson Group: ${s.groupLesson}, Lecture Group: ${s.groupLecture}
+            `<li>${s.name} (Index: ${s.studentIndex}) — Lesson Group: ${s.groupLessonId}, Lecture Group: ${s.groupLectureId}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
             <button class="delete-btn" data-id="${s.id}" data-type="students">Delete</button></li>`
         ).join("");
@@ -293,8 +386,8 @@
         const data = {
             name: formData.get("name"),
             studentIndex: formData.get("studentIndex"),
-            groupLesson: formData.get("groupLesson") ? Number(formData.get("groupLesson")) : null,
-            groupLecture: formData.get("groupLecture") ? Number(formData.get("groupLecture")) : null
+            groupLessonId: formData.get("groupLessonId") ? Number(formData.get("groupLessonId")) : null,
+            groupLectureId: formData.get("groupLectureId") ? Number(formData.get("groupLectureId")) : null
         };
 
         if (id) {
@@ -330,8 +423,8 @@
                 studentForm.id.value = student.id;
                 studentForm.name.value = student.name;
                 studentForm.studentIndex.value = student.studentIndex;
-                studentForm.groupLesson.value = student.groupLesson || "";
-                studentForm.groupLecture.value = student.groupLecture || "";
+                studentForm.groupLessonId.value = student.groupLessonId || "";
+                studentForm.groupLectureId.value = student.groupLectureId || "";
                 studentSubmitBtn.textContent = "Update Student";
                 studentCancelBtn.style.display = "inline-block";
             }
@@ -576,16 +669,18 @@
     }
 
     async function loadActivityDropdowns() {
-        const [teachersRes, subjectsRes, classroomsRes, activityTypesRes] = await Promise.all([
+        const [teachersRes, subjectsRes, classroomsRes, activityTypesRes, activitiesGroupsRes] = await Promise.all([
             fetch('/data/teachers'),
             fetch('/data/subjects'),
             fetch('/data/classrooms'),
-            fetch('/api/enums/activity-types')
+            fetch('/api/enums/activity-types'),
+            fetch('/data/activitiesGroups')
         ]);
         const teachers = await teachersRes.json();
         const subjects = await subjectsRes.json();
         const classrooms = await classroomsRes.json();
         const activityTypes = await activityTypesRes.json();
+        const activitiesGroups = await activitiesGroupsRes.json();
 
         // Populate subjects dropdown
         const subjectSelect = document.querySelector('select[name="subject_id"]');
@@ -610,6 +705,22 @@
         for (const [value, name] of Object.entries(activityTypes)) {
             activityTypeSelect.innerHTML += `<option value="${value}">${name}</option>`;
         }
+
+        // Populate groupLessonId and groupLectureId dropdowns
+        const groupLessonSelect = document.getElementById('group-lesson-select');
+        const groupLectureSelect = document.getElementById('group-lecture-select');
+
+        groupLessonSelect.innerHTML = '<option value="">Select Lesson Group</option>';
+        groupLectureSelect.innerHTML = '<option value="">Select Lecture Group</option>';
+
+        activitiesGroups.forEach(group => {
+            const option = `<option value="${group.id}">Group ${group.groupNumber}</option>`;
+            if (group.type === "LESSON") {
+                groupLessonSelect.innerHTML += option;
+            } else if (group.type === "LECTURE") {
+                groupLectureSelect.innerHTML += option;
+            }
+        });
     }
 
     // Delete handler
@@ -623,6 +734,7 @@
             else if (type === "classrooms") loadClassrooms();
             else if (type === "activities") loadActivities();
             else if (type === "students") loadStudents();
+            else if (type === "activitiesGroups") loadActivitiesGroups();
         }
     });
 </script>

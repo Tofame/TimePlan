@@ -8,11 +8,11 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class StudentGroupDTO {
-    private Long groupLesson;
-    private Long groupLecture;
+    private Long groupLessonId;
+    private Long groupLectureId;
 
-    public StudentGroupDTO(Long groupLecture, Long groupLesson) {
-        this.groupLecture = groupLecture;
-        this.groupLesson = groupLesson;
+    public StudentGroupDTO(Long groupLectureId, Long groupLessonId) {
+        this.groupLectureId = groupLectureId;
+        this.groupLessonId = groupLessonId;
     }
 }
