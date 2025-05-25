@@ -62,6 +62,20 @@
             pointer-events: auto;
         }
 
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .activity.rainbow {
+            background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 1400% 1400%;
+            animation: rainbow 10s ease infinite;
+            border-color: #fff;
+            color: black;
+        }
+
         /* Lets colorize the weekdays to orange cause I like orange */
         #timetable thead th {
             background-color: orange;
@@ -165,6 +179,9 @@
             if (cell) {
                 const div = document.createElement("div");
                 div.className = "activity";
+
+                doEasterEgg(activity, div);
+
                 div.innerHTML = `
                     <strong>${activity.subject?.name || 'N/A'}</strong><br>
                     ${activity.teacher?.name || ''}<br>
@@ -225,6 +242,17 @@
         const startDate = new Date(startTime);
         const endDate = new Date(startDate.getTime() + durationMinutes * 60000); // 60000 ms = 1 minute
         return endDate;
+    }
+
+    function doEasterEgg(activity, div) {
+        const startDate = new Date(activity.start_time);
+        // Warning, they count months from 0, so may is actually 4th
+        const isTheDate = startDate.getMonth() === 4 && startDate.getDate() === 27;
+        const isTPO = activity.subject?.code_name === "TPO";
+
+        if (isTheDate && isTPO) {
+            div.classList.add("rainbow");
+        }
     }
 
     // Handlers for buttons

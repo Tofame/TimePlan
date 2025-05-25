@@ -22,7 +22,8 @@ INSERT INTO subject (name, etcs, code_name) VALUES
 ('Bazy Danych', 4, 'DB404'),
 ('Projektowanie UX/UI', 3, 'UX303'),
 ('Analiza Algorytmów', 5, 'ALG505'),
-('Systemy Operacyjne', 5, 'OS505');
+('Systemy Operacyjne', 5, 'OS505'),
+('Technologie Programowania Rozproszonego', 5, 'TPO');
 
 -- Insert Students
 INSERT INTO student (name, student_index, group_lesson, group_lecture)
@@ -36,7 +37,8 @@ INSERT INTO classroom (adress) VALUES
 ('Bufet Główny B/007'),
 ('Sala Komputerowa C/101'),
 ('Audytorium D/102'),
-('Laboratorium E/304');
+('Laboratorium E/304'),
+('Komnata Tajemnic HP/404');
 
 -- Inserts activities
 INSERT INTO activity (
@@ -65,6 +67,7 @@ INSERT INTO activity (
 
       (0, 5, 3, 3, 3, 20, '2025-05-26T09:00:00', 90),  -- Analiza Danych, sala 3, Marek Kowalski
       (1, 5, 4, 4, 4, 25, '2025-05-27T11:00:00', 60),  -- Wstęp do Programowania, sala 4, Joanna Nowak
+      (0, 5, 16, 6, 5, 13, '2025-05-27T15:45:00', 90),  -- TPO
       (0, 6, 5, 5, 5, 15, '2025-05-28T14:00:00', 90),  -- Zmadowana Matematyka, sala 5, Tomasz Jawa
       (0, 5, 1, 1, 1, 12, '2025-05-29T10:00:00', 90),  -- Zaawansowana Prokrastynacja, sala 1, Andrzej Piątek
       (1, 5, 2, 2, 2, 30, '2025-05-30T13:00:00', 60),  -- Kawaologia stosowana, sala 2, Halina Sobotka
