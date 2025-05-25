@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/teachers")
@@ -33,11 +34,11 @@ public class TeacherController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Teacher> editTeacher(@PathVariable Long id, @RequestBody Teacher updatedTeacher) {
-        Teacher teacher = teacherService.editTeacher(id, updatedTeacher);
-        if (teacher == null) {
+        Optional<Teacher> teacher = teacherService.editTeacher(id, updatedTeacher);
+        if (teacher.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(teacher);
+        return ResponseEntity.ok(teacher.get());
     }
 
     @DeleteMapping("/{id}")

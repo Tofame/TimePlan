@@ -29,11 +29,11 @@ public class TeacherService {
         return teacherRepository.findByNameStartingWithIgnoreCase(name);
     }
 
-    public Teacher createTeacher(Teacher teacher) {
+    public Teacher addTeacher(Teacher teacher) {
         return teacherRepository.save(teacher);
     }
 
-    public Optional<Teacher> updateTeacher(Long id, Teacher updatedTeacher) {
+    public Optional<Teacher> editTeacher(Long id, Teacher updatedTeacher) {
         return teacherRepository.findById(id).map(existing -> {
             existing.setName(updatedTeacher.getName());
             existing.setTitle(updatedTeacher.getTitle());
