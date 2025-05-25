@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/timetable")
+@RequestMapping("/data")
 public class TimeTableController {
     private final ActivityService activityService;
 

@@ -156,7 +156,7 @@
     }
 
     async function loadActivities() {
-        const res = await fetch("/timetable");
+        const res = await fetch("/data");
         const activities = await res.json();
 
         // Clear previous activities from grid
