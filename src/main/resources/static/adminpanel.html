@@ -97,7 +97,8 @@
         <input type="text" name="name" placeholder="Name" required />
         <input type="text" name="codeName" placeholder="Code Name" required />
         <input type="number" name="etcs" placeholder="ETCS" />
-        <button type="submit">Add Subject</button>
+        <button type="submit" id="subject-submit-btn">Add subject</button>
+        <button type="button" id="subject-cancel-btn" style="display:none;">Cancel</button>
     </form>
     <ul id="subjects-list" class="scrollable"></ul>
 </section>
@@ -107,7 +108,8 @@
     <h2>Classrooms</h2>
     <form id="add-classroom-form">
         <input type="text" name="address" placeholder="Address" required />
-        <button type="submit">Add Classroom</button>
+        <button type="submit" id="classroom-submit-btn">Add classroom</button>
+        <button type="button" id="classroom-cancel-btn" style="display:none;">Cancel</button>
     </form>
     <ul id="classrooms-list" class="scrollable"></ul>
 </section>
@@ -338,6 +340,8 @@
     // Subject
     const subjectForm = document.getElementById("add-subject-form");
     const subjectsList = document.getElementById("subjects-list");
+    const subjectSubmitBtn = document.getElementById("subject-submit-btn");
+    const subjectCancelBtn = document.getElementById("subject-cancel-btn");
 
     async function loadSubjects() {
         const res = await fetch("/data/subjects");
@@ -354,8 +358,11 @@
     function resetSubjectForm() {
         subjectForm.reset();
         subjectForm.dataset.id = "";
-        subjectForm.querySelector("button[type='submit']").textContent = "Add Subject";
+        subjectSubmitBtn.textContent = "Add Subject";
+        subjectCancelBtn.style.display = "none";
     }
+
+    subjectCancelBtn.onclick = () => resetSubjectForm();
 
     subjectForm.onsubmit = async e => {
         e.preventDefault();
@@ -398,7 +405,8 @@
                 subjectForm.codeName.value = subject.codeName;
                 subjectForm.etcs.value = subject.etcs || "";
                 subjectForm.dataset.id = id;
-                subjectForm.querySelector("button[type='submit']").textContent = "Update Subject";
+                subjectSubmitBtn.textContent = "Update Subject";
+                subjectCancelBtn.style.display = "inline-block";
             }
         }
     };
@@ -406,6 +414,8 @@
     // Classroom
     const classroomForm = document.getElementById("add-classroom-form");
     const classroomsList = document.getElementById("classrooms-list");
+    const classroomSubmitBtn = document.getElementById("classroom-submit-btn");
+    const classroomCancelBtn = document.getElementById("classroom-cancel-btn");
 
     async function loadClassrooms() {
         const res = await fetch("/data/classrooms");
@@ -420,8 +430,11 @@
     function resetClassroomForm() {
         classroomForm.reset();
         classroomForm.dataset.id = "";
-        classroomForm.querySelector("button[type='submit']").textContent = "Add Classroom";
+        classroomSubmitBtn.textContent = "Add Classroom";
+        classroomCancelBtn.style.display = "none";
     }
+
+    classroomCancelBtn.onclick = () => resetClassroomForm();
 
     classroomForm.onsubmit = async e => {
         e.preventDefault();
@@ -460,7 +473,8 @@
             if (classroom) {
                 classroomForm.address.value = classroom.address;
                 classroomForm.dataset.id = id;
-                classroomForm.querySelector("button[type='submit']").textContent = "Update Classroom";
+                classroomSubmitBtn.textContent = "Update Classroom";
+                classroomCancelBtn.style.display = "inline-block";
             }
         }
     };
