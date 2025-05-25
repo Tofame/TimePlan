@@ -1,14 +1,14 @@
 package com.studencki.TimePlan.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 @Getter
@@ -22,5 +22,7 @@ public class Teacher {
     private Long id;
     private String name;
     private String title;
-    private int age;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 }

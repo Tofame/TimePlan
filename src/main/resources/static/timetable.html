@@ -188,7 +188,7 @@
                     ${activity.teacher?.name || ''}<br>
                     Room: ${activity.classroom?.adress || 'N/A'}
                     <div class="tooltip">
-                        Teacher: ${activity.teacher?.title || ''} ${activity.teacher?.name || ''} (Age: ${activity.teacher?.age || 'N/A'})<br>
+                        Teacher: ${activity.teacher?.title || ''} ${activity.teacher?.name || ''} (Age: ${calculateAge(activity.teacher?.birthDate) || 'N/A'})<br>
                         Room: ${activity.classroom?.adress || 'N/A'}<br>
                         Subject Code: ${activity.subject?.code_name || 'N/A'}<br>
                         ETCS: ${activity.subject?.etcs || 'N/A'}<br>
@@ -243,6 +243,23 @@
         const startDate = new Date(startTime);
         const endDate = new Date(startDate.getTime() + durationMinutes * 60000); // 60000 ms = 1 minute
         return endDate;
+    }
+
+    function calculateAge(birthDateStr) {
+        if (!birthDateStr) return 'N/A';
+
+        const birthDate = new Date(birthDateStr);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+
+        // If birth month/day hasn't occurred yet this year, subtract 1
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
     }
 
     function doEasterEgg(activity, div) {

@@ -1,10 +1,10 @@
 -- Insert Teachers
-INSERT INTO teacher (name, title, age) VALUES
-('Andrzej Piątek', 'Profesor nadzwyczajny', 55),
-('Halina Sobotka', 'Doktor Profesor Habilitowana', 42),
-('Marek Kowalski', 'Profesor zwyczajny', 60),
-('Joanna Nowak', 'Znawczyni', 38),
-('Tomasz jawa', 'Bóg Java', 45);
+INSERT INTO teacher (name, title, birth_date) VALUES
+('Andrzej Piątek', 'Profesor nadzwyczajny', '1970-01-01'),
+('Halina Sobotka', 'Doktor Profesor Habilitowana', '1983-01-01'),
+('Marek Kowalski', 'Profesor zwyczajny', '1965-01-01'),
+('Joanna Nowak', 'Znawczyni', '1987-01-01'),
+('Tomasz Jawa', 'Bóg Java', '1180-01-01');
 
 -- Insert Subjects
 INSERT INTO subject (name, etcs, code_name) VALUES

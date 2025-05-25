@@ -68,7 +68,7 @@
         <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
         <input type="text" name="name" placeholder="Name" required />
         <input type="text" name="title" placeholder="Title" />
-        <input type="number" name="age" placeholder="Age" />
+        <input type="text" name="birthDate" placeholder="dd.MM.yyyy" pattern="\d{2}\.\d{2}\.\d{4}" title="Format: dd.MM.yyyy" required />
         <button type="submit" id="teacher-submit-btn">Add Teacher</button>
         <button type="button" id="teacher-cancel-btn" style="display:none;">Cancel</button>
     </form>
@@ -180,10 +180,26 @@
         const list = await res.json();
 
         teachersList.innerHTML = list.map(t =>
-            `<li>${t.title || ''} ${t.name} (Age: ${t.age || '?'})
+            `<li>${t.title || ''} ${t.name} (Age: ${calculateAge(t.birthDate)})
             <button class="edit-btn" data-id="${t.id}">Edit</button>
             <button class="delete-btn" data-id="${t.id}" data-type="teachers">Delete</button></li>`
         ).join("");
+    }
+
+    function calculateAge(birthDateStr) {
+        if (!birthDateStr) return '?';
+
+        const birthDate = new Date(birthDateStr);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
     }
 
     function resetTeacherForm() {
@@ -200,7 +216,7 @@
         const data = {
             name: formData.get("name"),
             title: formData.get("title"),
-            age: formData.get("age") ? Number(formData.get("age")) : null,
+            birth_date: formData.get("birthDate") ? Number(formData.get("birthDate")) : null,
         };
 
         if (id) {
@@ -236,7 +252,7 @@
                 teacherForm.id.value = teacher.id;
                 teacherForm.name.value = teacher.name;
                 teacherForm.title.value = teacher.title || "";
-                teacherForm.age.value = teacher.age;
+                teacherForm.birth_date.value = teacher.birth_date;
                 teacherSubmitBtn.textContent = "Update Teacher";
                 teacherCancelBtn.style.display = "inline-block";
             }

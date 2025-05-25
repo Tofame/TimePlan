@@ -40,7 +40,7 @@ public class TeacherService {
         return teacherRepository.findById(id).map(existing -> {
             existing.setName(updatedTeacher.getName());
             existing.setTitle(updatedTeacher.getTitle());
-            existing.setAge(updatedTeacher.getAge());
+            existing.setBirthDate(updatedTeacher.getBirthDate());
             return teacherRepository.save(existing);
         });
     }
