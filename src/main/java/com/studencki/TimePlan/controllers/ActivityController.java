@@ -60,4 +60,15 @@ public class ActivityController {
         }
         return ResponseEntity.ok(activity.get());
     }
+
+    @GetMapping("/{id}/studentCount")
+    public ResponseEntity<Integer> getStudentCount(@PathVariable Long id) {
+        Optional<Activity> activityOptional = activityService.getActivityById(id);
+        if (activityOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        int studentCount = activityService.getStudentCount(activityOptional.get());
+        return ResponseEntity.ok(studentCount);
+    }
 }

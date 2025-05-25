@@ -5,10 +5,7 @@ import com.studencki.TimePlan.dtos.ActivityDTO;
 import com.studencki.TimePlan.models.Activity;
 import com.studencki.TimePlan.models.ActivityType;
 import com.studencki.TimePlan.models.Classroom;
-import com.studencki.TimePlan.repositories.ActivityRepository;
-import com.studencki.TimePlan.repositories.ClassroomRepository;
-import com.studencki.TimePlan.repositories.SubjectRepository;
-import com.studencki.TimePlan.repositories.TeacherRepository;
+import com.studencki.TimePlan.repositories.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,17 +19,20 @@ public class ActivityService {
     private final SubjectRepository subjectRepository;
     private final TeacherRepository teacherRepository;
     private final ClassroomRepository classroomRepository;
+    private final StudentRepository studentRepository;
 
     public ActivityService(
         ActivityRepository activityRepository,
        SubjectRepository subjectRepository,
        TeacherRepository teacherRepository,
-       ClassroomRepository classroomRepository
+       ClassroomRepository classroomRepository,
+       StudentRepository studentRepository
     ) {
         this.activityRepository = activityRepository;
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
         this.classroomRepository = classroomRepository;
+        this.studentRepository = studentRepository;
     }
 
     public List<Activity> getAllActivities() {
@@ -50,7 +50,6 @@ public class ActivityService {
             activity.setSubject(updatedActivity.getSubject());
             activity.setClassroom(updatedActivity.getClassroom());
             activity.setTeacher(updatedActivity.getTeacher());
-            activity.setStudent_count(updatedActivity.getStudent_count());
             activity.setStart_time(updatedActivity.getStart_time());
             activity.setDuration(updatedActivity.getDuration());
 
@@ -76,11 +75,18 @@ public class ActivityService {
         activity.setSubject(subjectRepository.findById(dto.getSubject_id()).orElse(null));
         activity.setTeacher(teacherRepository.findById(dto.getTeacher_id()).orElse(null));
         activity.setClassroom(classroomRepository.findById(dto.getClassroom_id()).orElse(null));
-        activity.setStudent_count(dto.getStudent_count());
         activity.setStart_time(LocalDateTime.parse(dto.getStart_time()));
         activity.setDuration(dto.getDuration());
         activity.setType(ActivityType.values()[dto.getType()]);
         activity.setGroup_number(dto.getGroup_number() != null ? dto.getGroup_number() : 0);
         return activity;
+    }
+
+    public int getStudentCount(Activity activity) {
+        if (activity.getType() == ActivityType.LECTURE) {
+            return studentRepository.countByGroupLecture(activity.getGroup_number());
+        } else {
+            return studentRepository.countByGroupLesson(activity.getGroup_number());
+        }
     }
 }

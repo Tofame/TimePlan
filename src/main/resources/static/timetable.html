@@ -162,16 +162,16 @@
         // Clear previous activities from grid
         document.querySelectorAll('.activity').forEach(el => el.remove());
 
-        activities.forEach(activity => {
+        for (const activity of activities) {
             const start = new Date(activity.start_time);
 
             // Check if activity is within current week (Monday to Friday)
-            if (!isInCurrentWeek(start)) return;
+            if (!isInCurrentWeek(start)) continue;
 
             const day = start.getDay(); // 1 (Mon) - 5 (Fri)
             const hour = start.getHours();
 
-            if (day < 1 || day > 5) return;
+            if (day < 1 || day > 5) continue;
 
             const selector = `td[data-day="${day - 1}"][data-hour="${hour}"]`;
             const cell = document.querySelector(selector);
@@ -179,6 +179,7 @@
             if (cell) {
                 const div = document.createElement("div");
                 div.className = "activity";
+                div.dataset.activityId = activity.id;
 
                 doEasterEgg(activity, div);
 
@@ -191,7 +192,7 @@
                         Room: ${activity.classroom?.adress || 'N/A'}<br>
                         Subject Code: ${activity.subject?.code_name || 'N/A'}<br>
                         ETCS: ${activity.subject?.etcs || 'N/A'}<br>
-                        Students: ${activity.student_count || 'N/A'}<br>
+                        Students: <span class="student-count">Loading...</span><br>
                         Type: ${activity.type || 'N/A'}<br>
                         Start: ${new Date(activity.start_time).toLocaleString()}<br>
                         End: ${calculateEndTime(activity.start_time, activity.duration || 0).toLocaleTimeString()}<br>
@@ -200,7 +201,7 @@
                 `;
                 cell.appendChild(div);
             }
-        });
+        }
     }
 
     function isInCurrentWeek(date) {
@@ -275,6 +276,32 @@
         createEmptyGrid();
         loadActivities();
     };
+
+    // Here I noticed in the console that await + e.g. multiple fired events in mouseover, would result
+    // in e.g. 2 GETs sent, this code is written in a way that the fetching status will be set, so there is only 1 GET.
+    document.addEventListener('mouseover', async (e) => {
+        const activityEl = e.target.closest('.activity');
+        if (
+            activityEl &&
+            activityEl.dataset.activityId &&
+            !activityEl.dataset.fetching &&
+            !activityEl.dataset.fetched
+        ) {
+            const span = activityEl.querySelector('.student-count');
+            activityEl.dataset.fetching = "true"; // Prevent duplicates
+
+            try {
+                const res = await fetch(`/data/activities/${activityEl.dataset.activityId}/studentCount`);
+                const count = await res.json();
+                span.textContent = count || 'N/A';
+                activityEl.dataset.fetched = "true"; // Mark as fetched
+            } catch (err) {
+                span.textContent = 'Error';
+            } finally {
+                delete activityEl.dataset.fetching; // Clean up either way
+            }
+        }
+    });
 </script>
 </body>
 </html>

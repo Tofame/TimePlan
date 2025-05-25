@@ -1,9 +1,6 @@
 package com.studencki.TimePlan.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +19,8 @@ public class Student {
     private Long id;
     private String name;
     private String student_index;
-    private int group_lesson;
-    private int group_lecture;
+    @Column(name = "group_lesson")
+    private int groupLesson;
+    @Column(name = "group_lecture")
+    private int groupLecture;
 }

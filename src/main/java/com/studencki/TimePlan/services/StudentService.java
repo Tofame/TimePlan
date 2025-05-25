@@ -38,8 +38,8 @@ public class StudentService {
         Student existing = studentRepository.findById(id).orElseThrow();
         existing.setName(updateStudent.getName());
         existing.setStudent_index(updateStudent.getStudent_index());
-        existing.setGroup_lesson(updateStudent.getGroup_lesson());
-        existing.setGroup_lecture(updateStudent.getGroup_lecture());
+        existing.setGroupLesson(updateStudent.getGroupLesson());
+        existing.setGroupLecture(updateStudent.getGroupLecture());
         return studentRepository.save(existing);
     }
 

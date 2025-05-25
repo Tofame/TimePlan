@@ -34,7 +34,6 @@ public class Activity {
     @JoinColumn(name = "teacher_id", nullable = true)
     private Teacher teacher;
 
-    private int student_count;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_time;
     private int duration;

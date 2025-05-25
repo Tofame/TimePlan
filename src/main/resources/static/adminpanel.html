@@ -119,7 +119,6 @@
         <select name="subject_id"></select>
         <select name="teacher_id"></select>
         <select name="classroom_id"></select>
-        <input type="number" name="student_count" placeholder="Student Count" />
         <label for="start_time">Start Time:</label>
         <input type="text" id="start_time" name="start_time" required>
         <input type="number" name="duration" placeholder="Duration (minutes)" required />
@@ -458,7 +457,6 @@
             subject_id: formData.get("subject_id") ? Number(formData.get("subject_id")) : null,
             teacher_id: formData.get("teacher_id") ? Number(formData.get("teacher_id")) : null,
             classroom_id: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
-            student_count: formData.get("student_count") ? Number(formData.get("student_count")) : null,
             start_time: formData.get("start_time"),
             duration: formData.get("duration") ? Number(formData.get("duration")) : null,
             type: formData.get("activity_type") ? Number(formData.get("activity_type")) : 0,
