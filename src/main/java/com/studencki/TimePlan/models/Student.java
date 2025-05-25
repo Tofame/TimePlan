@@ -18,9 +18,11 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String student_index;
+    @Column(name = "student_index")
+    private String studentIndex;
     @Column(name = "group_lesson")
     private int groupLesson;
     @Column(name = "group_lecture")
     private int groupLecture;
+    private String password;
 }

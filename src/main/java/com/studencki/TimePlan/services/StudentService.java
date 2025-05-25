@@ -37,7 +37,7 @@ public class StudentService {
     public Student editStudent(Long id, Student updateStudent) {
         Student existing = studentRepository.findById(id).orElseThrow();
         existing.setName(updateStudent.getName());
-        existing.setStudent_index(updateStudent.getStudent_index());
+        existing.setStudentIndex(updateStudent.getStudentIndex());
         existing.setGroupLesson(updateStudent.getGroupLesson());
         existing.setGroupLecture(updateStudent.getGroupLecture());
         return studentRepository.save(existing);
@@ -45,5 +45,9 @@ public class StudentService {
 
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
+    }
+
+    public boolean studentExists(String studentIndex, String password) {
+        return studentRepository.findByStudentIndexAndPassword(studentIndex, password).isPresent();
     }
 }
