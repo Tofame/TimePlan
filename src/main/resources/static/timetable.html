@@ -156,7 +156,7 @@
     }
 
     async function loadActivities() {
-        const res = await fetch("/data");
+        const res = await fetch("/data/activities");
         const activities = await res.json();
 
         // Clear previous activities from grid

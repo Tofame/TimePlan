@@ -161,7 +161,7 @@
     const teacherCancelBtn = document.getElementById("teacher-cancel-btn");
 
     async function loadTeachers() {
-        const res = await fetch("/teachers");
+        const res = await fetch("/data/teachers");
         const list = await res.json();
 
         teachersList.innerHTML = list.map(t =>
@@ -190,14 +190,14 @@
 
         if (id) {
             // Edit
-            await fetch(`/teachers/${id}`, {
+            await fetch(`/data/teachers/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
         } else {
             // Add
-            await fetch("/teachers", {
+            await fetch("/data/teachers", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
@@ -214,7 +214,7 @@
         if (e.target.classList.contains("edit-btn")) {
             const id = e.target.dataset.id;
             // Fetch the single teacher data or from loaded list
-            const res = await fetch("/teachers");
+            const res = await fetch("/data/teachers");
             const teachers = await res.json();
             const teacher = teachers.find(s => s.id == id);
             if (teacher) {
@@ -235,7 +235,7 @@
     const studentCancelBtn = document.getElementById("student-cancel-btn");
 
     async function loadStudents() {
-        const res = await fetch("/students");
+        const res = await fetch("/data/students");
         const list = await res.json();
         const ul = document.getElementById("students-list");
         ul.innerHTML = list.map(s =>
@@ -265,14 +265,14 @@
 
         if (id) {
             // Edit student
-            await fetch(`/students/${id}`, {
+            await fetch(`/data/students/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
         } else {
             // Add student
-            await fetch("/students", {
+            await fetch("/data/students", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
@@ -289,7 +289,7 @@
         if (e.target.classList.contains("edit-btn")) {
             const id = e.target.dataset.id;
             // Fetch the single student data or from loaded list
-            const res = await fetch("/students");
+            const res = await fetch("/data/students");
             const students = await res.json();
             const student = students.find(s => s.id == id);
             if (student) {
@@ -309,7 +309,7 @@
     const subjectsList = document.getElementById("subjects-list");
 
     async function loadSubjects() {
-        const res = await fetch("/subjects");
+        const res = await fetch("/data/subjects");
         const list = await res.json();
         subjectsList.innerHTML = list.map(s =>
             `<li>
@@ -338,14 +338,14 @@
 
         if (id) {
             // Edit
-            await fetch(`/subjects/${id}`, {
+            await fetch(`/data/subjects/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
         } else {
             // Add
-            await fetch("/subjects", {
+            await fetch("/data/subjects", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
@@ -359,7 +359,7 @@
     subjectsList.onclick = async e => {
         if (e.target.classList.contains("edit-btn")) {
             const id = e.target.dataset.id;
-            const res = await fetch("/subjects");
+            const res = await fetch("/data/subjects");
             const subjects = await res.json();
             const subject = subjects.find(s => s.id == id);
             if (subject) {
@@ -377,7 +377,7 @@
     const classroomsList = document.getElementById("classrooms-list");
 
     async function loadClassrooms() {
-        const res = await fetch("/classrooms");
+        const res = await fetch("/data/classrooms");
         const list = await res.json();
         classroomsList.innerHTML = list.map(c =>
             `<li>${c.adress}
@@ -402,14 +402,14 @@
 
         if (id) {
             // Edit
-            await fetch(`/classrooms/${id}`, {
+            await fetch(`/data/classrooms/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
         } else {
             // Add
-            await fetch("/classrooms", {
+            await fetch("/data/classrooms", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
@@ -423,7 +423,7 @@
     classroomsList.onclick = async e => {
         if (e.target.classList.contains("edit-btn")) {
             const id = e.target.dataset.id;
-            const res = await fetch("/classrooms");
+            const res = await fetch("/data/classrooms");
             const classrooms = await res.json();
             const classroom = classrooms.find(c => c.id == id);
             if (classroom) {
@@ -438,7 +438,7 @@
     document.getElementById("add-activity-form").onsubmit = async e => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.target));
-        await fetch("/activities", {
+        await fetch("/data/activities", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
@@ -452,7 +452,7 @@
     let sortAsc = true;
 
     async function loadActivities() {
-        const res = await fetch("/activities");
+        const res = await fetch("/data/activities");
         allActivities = await res.json();
         renderActivities(allActivities);
     }
@@ -523,7 +523,7 @@
         if (e.target.classList.contains("delete-btn")) {
             const id = e.target.dataset.id;
             const type = e.target.dataset.type;
-            await fetch(`/${type}/${id}`, { method: "DELETE" });
+            await fetch(`/data/${type}/${id}`, { method: "DELETE" });
             if (type === "teachers") loadTeachers();
             else if (type === "subjects") loadSubjects();
             else if (type === "classrooms") loadClassrooms();

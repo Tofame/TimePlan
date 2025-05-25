@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/teachers")
+@RequestMapping("/data/teachers")
 public class TeacherController {
     private final TeacherService teacherService;
 

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/activities")
+@RequestMapping("/data/activities")
 public class ActivityController {
     private final ActivityService activityService;
 
