@@ -167,7 +167,7 @@
         teachersList.innerHTML = list.map(t =>
             `<li>${t.title || ''} ${t.name} (Age: ${t.age || '?'})
             <button class="edit-btn" data-id="${t.id}">Edit</button>
-            <button class="delete-btn" data-id="${t.id}" data-type="teacher">Delete</button></li>`
+            <button class="delete-btn" data-id="${t.id}" data-type="teachers">Delete</button></li>`
         ).join("");
     }
 
@@ -241,7 +241,7 @@
         ul.innerHTML = list.map(s =>
             `<li>${s.name} (Index: ${s.student_index}) — Lesson Group: ${s.group_lesson}, Lecture Group: ${s.group_lecture}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
-            <button class="delete-btn" data-id="${s.id}" data-type="student">Delete</button></li>`
+            <button class="delete-btn" data-id="${s.id}" data-type="students">Delete</button></li>`
         ).join("");
     }
 
@@ -315,7 +315,7 @@
             `<li>
             ${s.name} (${s.code_name}), ETCS: ${s.etcs}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
-            <button class="delete-btn" data-id="${s.id}" data-type="subject">Delete</button>
+            <button class="delete-btn" data-id="${s.id}" data-type="subjects">Delete</button>
             </li>`
         ).join("");
     }
@@ -382,7 +382,7 @@
         classroomsList.innerHTML = list.map(c =>
             `<li>${c.adress}
         <button class="edit-btn" data-id="${c.id}">Edit</button>
-        <button class="delete-btn" data-id="${c.id}" data-type="classroom">Delete</button></li>`
+        <button class="delete-btn" data-id="${c.id}" data-type="classrooms">Delete</button></li>`
         ).join("");
     }
 
@@ -438,7 +438,7 @@
     document.getElementById("add-activity-form").onsubmit = async e => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.target));
-        await fetch("/data/activities", {
+        await fetch("/activities", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
@@ -452,7 +452,7 @@
     let sortAsc = true;
 
     async function loadActivities() {
-        const res = await fetch("/data/activities");
+        const res = await fetch("/activities");
         allActivities = await res.json();
         renderActivities(allActivities);
     }
@@ -512,7 +512,7 @@
           (${a.subject?.code_name || '-'}) — ${new Date(a.start_time).toLocaleString()}
           <br>
           <small>${a.type || ''} with ${a.teacher?.name || 'N/A'} in ${a.classroom?.adress || 'N/A'} (${a.duration || 0} mins)</small>
-          <button class="delete-btn" data-id="${a.id}" data-type="activity">Delete</button>
+          <button class="delete-btn" data-id="${a.id}" data-type="activities">Delete</button>
         `;
             listEl.appendChild(li);
         });
@@ -523,12 +523,12 @@
         if (e.target.classList.contains("delete-btn")) {
             const id = e.target.dataset.id;
             const type = e.target.dataset.type;
-            await fetch(`/${type}s/${id}`, { method: "DELETE" });
-            if (type === "teacher") loadTeachers();
-            else if (type === "subject") loadSubjects();
-            else if (type === "classroom") loadClassrooms();
-            else if (type === "activity") loadActivities();
-            else if (type === "student") loadStudents();
+            await fetch(`/${type}/${id}`, { method: "DELETE" });
+            if (type === "teachers") loadTeachers();
+            else if (type === "subjects") loadSubjects();
+            else if (type === "classrooms") loadClassrooms();
+            else if (type === "activities") loadActivities();
+            else if (type === "students") loadStudents();
         }
     });
 </script>
