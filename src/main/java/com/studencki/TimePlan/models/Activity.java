@@ -35,7 +35,7 @@ public class Activity {
     private Teacher teacher;
 
     private int student_count;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_time;
     private int duration;
 }

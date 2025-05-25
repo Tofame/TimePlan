@@ -53,6 +53,10 @@
             padding: 10px;
         }
     </style>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
 <h1>Admin Panel</h1>
@@ -112,13 +116,16 @@
 <section>
     <h2>Activities</h2>
     <form id="add-activity-form">
-        <input type="text" name="subject" placeholder="Subject Name" required />
-        <input type="text" name="teacher" placeholder="Teacher Name" />
-        <input type="text" name="classroom" placeholder="Classroom Address" />
+        <select name="subject_id"></select>
+        <select name="teacher_id"></select>
+        <select name="classroom_id"></select>
         <input type="number" name="student_count" placeholder="Student Count" />
-        <input type="datetime-local" name="start_time" required />
+        <label for="start_time">Start Time:</label>
+        <input type="text" id="start_time" name="start_time" required>
         <input type="number" name="duration" placeholder="Duration (minutes)" required />
-        <input type="text" name="type" placeholder="Type (e.g. lecture)" />
+        <select name="activity_type">
+            <option value="">Select Activity Type</option>
+        </select>
         <button type="submit">Add Activity</button>
     </form>
 
@@ -141,7 +148,15 @@
     <!-- List -->
     <ul id="activities-list" class="scrollable" style="margin-top: 15px;"></ul>
 </section>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr("#start_time", {
+            enableTime: true,
+            dateFormat: "Y-m-d\\TH:i",
+            time_24hr: true
+        });
+    });
+</script>
 <script>
     // Load Data
     window.onload = async () => {
@@ -150,7 +165,8 @@
             loadStudents(),
             loadSubjects(),
             loadClassrooms(),
-            loadActivities()
+            loadActivities(),
+            loadActivityDropdowns()
         ]);
     };
 
@@ -437,12 +453,24 @@
     // Activities
     document.getElementById("add-activity-form").onsubmit = async e => {
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
+        const formData = new FormData(e.target);
+        const data = {
+            subject_id: formData.get("subject_id") ? Number(formData.get("subject_id")) : null,
+            teacher_id: formData.get("teacher_id") ? Number(formData.get("teacher_id")) : null,
+            classroom_id: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
+            student_count: formData.get("student_count") ? Number(formData.get("student_count")) : null,
+            start_time: formData.get("start_time"),
+            duration: formData.get("duration") ? Number(formData.get("duration")) : null,
+            type: formData.get("activity_type") ? Number(formData.get("activity_type")) : 0,
+            group_number: formData.get("group_number") ? Number(formData.get("group_number")) : null,
+        };
+
         await fetch("/data/activities", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
         });
+
         e.target.reset();
         loadActivities();
     };
@@ -516,6 +544,43 @@
         `;
             listEl.appendChild(li);
         });
+    }
+
+    async function loadActivityDropdowns() {
+        const [teachersRes, subjectsRes, classroomsRes, activityTypesRes] = await Promise.all([
+            fetch('/data/teachers'),
+            fetch('/data/subjects'),
+            fetch('/data/classrooms'),
+            fetch('/api/enums/activity-types')
+        ]);
+        const teachers = await teachersRes.json();
+        const subjects = await subjectsRes.json();
+        const classrooms = await classroomsRes.json();
+        const activityTypes = await activityTypesRes.json();
+
+        // Populate subjects dropdown
+        const subjectSelect = document.querySelector('select[name="subject_id"]');
+        subjectSelect.innerHTML = '<option value="">Select Subject</option>' + subjects.map(s =>
+            `<option value="${s.id}">${s.name} (${s.code_name})</option>`
+        ).join('');
+
+        // Populate teachers dropdown
+        const teacherSelect = document.querySelector('select[name="teacher_id"]');
+        teacherSelect.innerHTML = `<option value="">Select Teacher</option>` + teachers.map(t =>
+            `<option value="${t.id}">${t.title ? t.title + ' ' : ''}${t.name}</option>`
+        ).join('');
+
+        // Populate classrooms dropdown
+        const classroomSelect = document.querySelector('select[name="classroom_id"]');
+        classroomSelect.innerHTML = '<option value="">Select Classroom</option>' + classrooms.map(c =>
+            `<option value="${c.id}">${c.adress}</option>`
+        ).join('');
+
+        const activityTypeSelect = document.querySelector('select[name="activity_type"]');
+        activityTypeSelect.innerHTML = '<option value="">Select Activity Type</option>';
+        for (const [value, name] of Object.entries(activityTypes)) {
+            activityTypeSelect.innerHTML += `<option value="${value}">${name}</option>`;
+        }
     }
 
     // Delete handler

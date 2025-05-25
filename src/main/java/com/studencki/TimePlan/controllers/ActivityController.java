@@ -1,11 +1,14 @@
 package com.studencki.TimePlan.controllers;
 
+import com.studencki.TimePlan.dtos.ActivityDTO;
 import com.studencki.TimePlan.models.Activity;
+import com.studencki.TimePlan.models.ActivityType;
 import com.studencki.TimePlan.models.Classroom;
 import com.studencki.TimePlan.services.ActivityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +27,8 @@ public class ActivityController {
     }
 
     @PostMapping
-    public ResponseEntity<Activity> addActivity(@RequestBody Activity activity) {
+    public ResponseEntity<Activity> addActivity(@RequestBody ActivityDTO dto) {
+        Activity activity = activityService.convertDtoToEntity(dto);
         Activity created = activityService.addActivity(activity);
         return ResponseEntity.ok(created);
     }
