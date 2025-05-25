@@ -111,6 +111,7 @@
                 message.textContent = 'Login successful!';
                 message.style.display = 'block';
                 localStorage.setItem('jwtToken', data.token);
+                window.location.href = '/timetable.html';
             } else if (response.status === 401) {
                 message.style.color = 'red';
                 message.textContent = 'Invalid index or password.';
