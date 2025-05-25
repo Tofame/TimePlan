@@ -68,7 +68,7 @@
         <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
         <input type="text" name="name" placeholder="Name" required />
         <input type="text" name="title" placeholder="Title" />
-        <input type="text" name="birthDate" placeholder="dd.MM.yyyy" pattern="\d{2}\.\d{2}\.\d{4}" title="Format: dd.MM.yyyy" required />
+        <input type="date" name="birthDate" required />
         <button type="submit" id="teacher-submit-btn">Add Teacher</button>
         <button type="button" id="teacher-cancel-btn" style="display:none;">Cancel</button>
     </form>
@@ -216,7 +216,7 @@
         const data = {
             name: formData.get("name"),
             title: formData.get("title"),
-            birth_date: formData.get("birthDate") ? Number(formData.get("birthDate")) : null,
+            birthDate: formData.get("birthDate") || null,
         };
 
         if (id) {
@@ -252,7 +252,7 @@
                 teacherForm.id.value = teacher.id;
                 teacherForm.name.value = teacher.name;
                 teacherForm.title.value = teacher.title || "";
-                teacherForm.birth_date.value = teacher.birth_date;
+                teacherForm.birthDate.value = teacher.birthDate;
                 teacherSubmitBtn.textContent = "Update Teacher";
                 teacherCancelBtn.style.display = "inline-block";
             }
