@@ -10,10 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/data")
-public class TimeTableController {
+public class ActivityController {
     private final ActivityService activityService;
 
-    public TimeTableController(ActivityService activityService) {
+    public ActivityController(ActivityService activityService) {
         this.activityService = activityService;
     }
 

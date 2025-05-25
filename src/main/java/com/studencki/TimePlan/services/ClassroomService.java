@@ -46,7 +46,7 @@ public class ClassroomService {
     @Transactional
     public boolean deleteClassroom(Long id) {
         if (classroomRepository.existsById(id)) {
-            List<Activity> activities = activityRepository.findAllBySubjectId(id);
+            List<Activity> activities = activityRepository.findAllByClassroomId(id);
             for (Activity activity : activities) {
                 activity.setClassroom(null);
             }

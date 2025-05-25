@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
-    void deleteAllByTeacherId(Long teacherId);
     List<Activity> findAllByTeacherId(Long teacherId);
     List<Activity> findAllBySubjectId(Long subjectId);
+    List<Activity> findAllByClassroomId(Long classroomId);
 }

@@ -28,7 +28,7 @@ public class Activity {
     @JoinColumn(name = "subject_id", nullable = true)
     private Subject subject;
     @ManyToOne
-    @JoinColumn(name = "clasroom_id", nullable = true)
+    @JoinColumn(name = "classroom_id", nullable = true)
     private Classroom classroom;
     @ManyToOne
     @JoinColumn(name = "teacher_id", nullable = true)

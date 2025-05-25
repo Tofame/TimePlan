@@ -2,9 +2,7 @@ package com.studencki.TimePlan.services;
 
 
 import com.studencki.TimePlan.models.Activity;
-import com.studencki.TimePlan.models.Student;
 import com.studencki.TimePlan.repositories.ActivityRepository;
-import com.studencki.TimePlan.repositories.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
