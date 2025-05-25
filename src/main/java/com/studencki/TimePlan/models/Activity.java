@@ -22,7 +22,8 @@ public class Activity {
     private Long id;
     @Enumerated(EnumType.ORDINAL)
     private ActivityType type;
-    private int group_number;
+    @Column(name = "group_number")
+    private int groupNumber;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = true)

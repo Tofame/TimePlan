@@ -28,7 +28,7 @@ INSERT INTO subject (name, etcs, code_name) VALUES
 -- Insert Students
 INSERT INTO student (name, student_index, group_lesson, group_lecture, password) VALUES
 ('Zofia Ziewalska', 's123', 5, 5, '123'),
-('Janek Drzemka', 's404', 5, 5, '123');
+('Janek Drzemka', 's404', 6, 6, '123');
 
 -- Insert Classrooms
 INSERT INTO classroom (adress) VALUES

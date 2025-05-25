@@ -46,7 +46,7 @@ public class ActivityService {
     public Optional<Activity> editActivity(Long id, Activity updatedActivity) {
         return activityRepository.findById(id).map(activity -> {
             activity.setType(updatedActivity.getType());
-            activity.setGroup_number(updatedActivity.getGroup_number());
+            activity.setGroupNumber(updatedActivity.getGroupNumber());
             activity.setSubject(updatedActivity.getSubject());
             activity.setClassroom(updatedActivity.getClassroom());
             activity.setTeacher(updatedActivity.getTeacher());
@@ -78,15 +78,23 @@ public class ActivityService {
         activity.setStart_time(LocalDateTime.parse(dto.getStart_time()));
         activity.setDuration(dto.getDuration());
         activity.setType(ActivityType.values()[dto.getType()]);
-        activity.setGroup_number(dto.getGroup_number() != null ? dto.getGroup_number() : 0);
+        activity.setGroupNumber(dto.getGroup_number() != null ? dto.getGroup_number() : 0);
         return activity;
     }
 
     public int getStudentCount(Activity activity) {
         if (activity.getType() == ActivityType.LECTURE) {
-            return studentRepository.countByGroupLecture(activity.getGroup_number());
+            return studentRepository.countByGroupLecture(activity.getGroupNumber());
         } else {
-            return studentRepository.countByGroupLesson(activity.getGroup_number());
+            return studentRepository.countByGroupLesson(activity.getGroupNumber());
         }
+    }
+
+    public List<Activity> getLectureActivities(int groupNumber) {
+        return activityRepository.findByTypeAndGroupNumber(ActivityType.LECTURE, groupNumber);
+    }
+
+    public List<Activity> getLessonActivities(int groupNumber) {
+        return activityRepository.findByTypeAndGroupNumber(ActivityType.LESSON, groupNumber);
     }
 }

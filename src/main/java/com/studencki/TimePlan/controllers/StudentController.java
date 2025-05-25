@@ -1,6 +1,7 @@
 package com.studencki.TimePlan.controllers;
 
 import com.studencki.TimePlan.dtos.LoginInfoDTO;
+import com.studencki.TimePlan.dtos.StudentGroupDTO;
 import com.studencki.TimePlan.models.JwtUtils;
 import com.studencki.TimePlan.models.Student;
 import com.studencki.TimePlan.services.StudentService;
@@ -64,5 +65,19 @@ public class StudentController {
         response.put("token", token);
         System.out.println("res " + response);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{studentIndex}/groups")
+    public ResponseEntity<StudentGroupDTO> getStudentGroups(@PathVariable String studentIndex) {
+        try {
+            Optional<StudentGroupDTO> groups = studentService.getStudentGroups(studentIndex);
+            if(groups.isPresent()) {
+                return ResponseEntity.ok(groups.get());
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

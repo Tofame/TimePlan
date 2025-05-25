@@ -26,6 +26,16 @@ public class ActivityController {
         return activityService.getAllActivities();
     }
 
+    @GetMapping("/lectures/{groupId}")
+    public List<Activity> getAllLectures(@PathVariable int groupId) {
+        return activityService.getLectureActivities(groupId);
+    }
+
+    @GetMapping("/lessons/{groupId}")
+    public List<Activity> getAllLessons(@PathVariable int groupId) {
+        return activityService.getLessonActivities(groupId);
+    }
+
     @PostMapping
     public ResponseEntity<Activity> addActivity(@RequestBody ActivityDTO dto) {
         Activity activity = activityService.convertDtoToEntity(dto);

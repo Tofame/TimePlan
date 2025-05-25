@@ -1,6 +1,7 @@
 package com.studencki.TimePlan.services;
 
 
+import com.studencki.TimePlan.dtos.StudentGroupDTO;
 import com.studencki.TimePlan.models.Student;
 import com.studencki.TimePlan.models.Teacher;
 import com.studencki.TimePlan.repositories.StudentRepository;
@@ -8,6 +9,7 @@ import com.studencki.TimePlan.repositories.TeacherRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -49,5 +51,13 @@ public class StudentService {
 
     public boolean studentExists(String studentIndex, String password) {
         return studentRepository.findByStudentIndexAndPassword(studentIndex, password).isPresent();
+    }
+
+    public Optional<StudentGroupDTO> getStudentGroups(String studentIndex) {
+        return studentRepository.findByStudentIndex(studentIndex)
+                .map(student -> new StudentGroupDTO(
+                        student.getGroupLecture(),
+                        student.getGroupLesson()
+                ));
     }
 }
