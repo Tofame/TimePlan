@@ -29,6 +29,7 @@ public class Activity {
     @ManyToOne
     private Classroom classroom;
     @ManyToOne
+    @JoinColumn(name = "teacher_id", nullable = true)
     private Teacher teacher;
 
     private int student_count;

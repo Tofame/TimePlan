@@ -2,6 +2,7 @@ package com.studencki.TimePlan.services;
 
 
 import com.studencki.TimePlan.models.Teacher;
+import com.studencki.TimePlan.repositories.ActivityRepository;
 import com.studencki.TimePlan.repositories.TeacherRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
+    private final ActivityRepository activityRepository;
 
-    public TeacherService(TeacherRepository teacherRepository) {
+    public TeacherService(TeacherRepository teacherRepository, ActivityRepository activityRepository) {
         this.teacherRepository = teacherRepository;
+        this.activityRepository = activityRepository;
     }
 
     public List<Teacher> getAllTeachers() {
@@ -43,8 +46,17 @@ public class TeacherService {
     }
 
     public boolean deleteTeacher(Long id) {
-        if (teacherRepository.existsById(id)) {
-            teacherRepository.deleteById(id);
+        Optional<Teacher> optionalTeacher = teacherRepository.findById(id);
+        if (optionalTeacher.isPresent()) {
+            Teacher teacher = optionalTeacher.get();
+
+            // Remove teacher from their activities (foreign key constraint)
+            activityRepository.findAllByTeacherId(id).forEach(activity -> {
+                activity.setTeacher(null);
+                activityRepository.save(activity);
+            });
+
+            teacherRepository.delete(teacher);
             return true;
         }
         return false;

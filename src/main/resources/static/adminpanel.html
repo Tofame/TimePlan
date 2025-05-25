@@ -61,10 +61,12 @@
 <section>
     <h2>Teachers</h2>
     <form id="add-teacher-form">
+        <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
         <input type="text" name="name" placeholder="Name" required />
         <input type="text" name="title" placeholder="Title" />
         <input type="number" name="age" placeholder="Age" />
-        <button type="submit">Add Teacher</button>
+        <button type="submit" id="teacher-submit-btn">Add Teacher</button>
+        <button type="button" id="teacher-cancel-btn" style="display:none;">Cancel</button>
     </form>
     <ul id="teachers-list" class="scrollable"></ul>
 </section>
@@ -153,27 +155,78 @@
     };
 
     // Teacher
-    document.getElementById("add-teacher-form").onsubmit = async e => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
-        await fetch("/teachers", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-        e.target.reset();
-        loadTeachers();
-    };
+    const teacherForm = document.getElementById("add-teacher-form");
+    const teachersList = document.getElementById("teachers-list");
+    const teacherSubmitBtn = document.getElementById("teacher-submit-btn");
+    const teacherCancelBtn = document.getElementById("teacher-cancel-btn");
 
     async function loadTeachers() {
         const res = await fetch("/teachers");
         const list = await res.json();
-        const ul = document.getElementById("teachers-list");
-        ul.innerHTML = list.map(t =>
+
+        teachersList.innerHTML = list.map(t =>
             `<li>${t.title || ''} ${t.name} (Age: ${t.age || '?'})
-         <button class="delete-btn" data-id="${t.id}" data-type="teacher">Delete</button></li>`
+            <button class="edit-btn" data-id="${t.id}">Edit</button>
+            <button class="delete-btn" data-id="${t.id}" data-type="teacher">Delete</button></li>`
         ).join("");
     }
+
+    function resetTeacherForm() {
+        teacherForm.reset();
+        teacherForm.id.value = "";
+        teacherSubmitBtn.textContent = "Add Teacher";
+        teacherCancelBtn.style.display = "none";
+    }
+
+    teacherForm.onsubmit = async e => {
+        e.preventDefault();
+        const formData = new FormData(teacherForm);
+        const id = formData.get("id");
+        const data = {
+            name: formData.get("name"),
+            title: formData.get("title"),
+            age: formData.get("age") ? Number(formData.get("age")) : null,
+        };
+
+        if (id) {
+            // Edit
+            await fetch(`/teachers/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            // Add
+            await fetch("/teachers", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
+
+        resetTeacherForm();
+        loadTeachers();
+    };
+
+    teacherCancelBtn.onclick = () => resetTeacherForm();
+
+    teachersList.onclick = async e => {
+        if (e.target.classList.contains("edit-btn")) {
+            const id = e.target.dataset.id;
+            // Fetch the single teacher data or from loaded list
+            const res = await fetch("/teachers");
+            const teachers = await res.json();
+            const teacher = teachers.find(s => s.id == id);
+            if (teacher) {
+                teacherForm.id.value = teacher.id;
+                teacherForm.name.value = teacher.name;
+                teacherForm.title.value = teacher.title || "";
+                teacherForm.age.value = teacher.age;
+                teacherSubmitBtn.textContent = "Update Teacher";
+                teacherCancelBtn.style.display = "inline-block";
+            }
+        }
+    };
 
     // Student
     const studentForm = document.getElementById("add-student-form");

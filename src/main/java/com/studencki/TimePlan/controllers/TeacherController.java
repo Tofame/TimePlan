@@ -2,6 +2,7 @@ package com.studencki.TimePlan.controllers;
 
 import com.studencki.TimePlan.models.Teacher;
 import com.studencki.TimePlan.services.TeacherService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> deleteTeacher(@PathVariable Long id) {
         boolean deleted = teacherService.deleteTeacher(id);
         if (deleted) {
