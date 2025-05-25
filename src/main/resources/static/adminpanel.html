@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        section {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+
+        form {
+            margin-top: 10px;
+        }
+
+        input, button {
+            padding: 6px;
+            margin: 4px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border-bottom: 1px solid #ddd;
+            padding: 6px 0;
+        }
+
+        .delete-btn {
+            margin-left: 10px;
+            color: red;
+            cursor: pointer;
+        }
+
+        .scrollable {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Admin Panel</h1>
+
+<!-- TEACHERS -->
+<section>
+    <h2>Teachers</h2>
+    <form id="add-teacher-form">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="text" name="title" placeholder="Title" />
+        <input type="number" name="age" placeholder="Age" />
+        <button type="submit">Add Teacher</button>
+    </form>
+    <ul id="teachers-list" class="scrollable"></ul>
+</section>
+
+<!-- STUDENTS -->
+<section>
+    <h2>Students</h2>
+    <form id="add-student-form">
+        <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="text" name="student_index" placeholder="Student Index" required />
+        <input type="number" name="group_lesson" placeholder="Group Lesson" />
+        <input type="number" name="group_lecture" placeholder="Group Lecture" />
+        <button type="submit" id="student-submit-btn">Add Student</button>
+        <button type="button" id="student-cancel-btn" style="display:none;">Cancel</button>
+    </form>
+    <ul id="students-list" class="scrollable"></ul>
+</section>
+
+<!-- SUBJECTS -->
+<section>
+    <h2>Subjects</h2>
+    <form id="add-subject-form">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="text" name="code_name" placeholder="Code Name" required />
+        <input type="number" name="etcs" placeholder="ETCS" />
+        <button type="submit">Add Subject</button>
+    </form>
+    <ul id="subjects-list" class="scrollable"></ul>
+</section>
+
+<!-- CLASSROOMS -->
+<section>
+    <h2>Classrooms</h2>
+    <form id="add-classroom-form">
+        <input type="text" name="adress" placeholder="Address" required />
+        <button type="submit">Add Classroom</button>
+    </form>
+    <ul id="classrooms-list" class="scrollable"></ul>
+</section>
+
+<!-- ACTIVITIES -->
+<section>
+    <h2>Activities</h2>
+    <form id="add-activity-form">
+        <input type="text" name="subject" placeholder="Subject Name" required />
+        <input type="text" name="teacher" placeholder="Teacher Name" />
+        <input type="text" name="classroom" placeholder="Classroom Address" />
+        <input type="number" name="student_count" placeholder="Student Count" />
+        <input type="datetime-local" name="start_time" required />
+        <input type="number" name="duration" placeholder="Duration (minutes)" required />
+        <input type="text" name="type" placeholder="Type (e.g. lecture)" />
+        <button type="submit">Add Activity</button>
+    </form>
+
+    <!-- Filters and Sorting -->
+    <div style="margin-top: 20px;">
+        <h3>Filter / Sort Activities</h3>
+        <input type="date" id="filter-date" />
+        <input type="text" id="filter-code" placeholder="Subject Code" />
+        <button onclick="applyFilters()">Apply Filter</button>
+        <button onclick="clearFilters()">Clear</button>
+
+        <div style="margin-top: 10px;">
+            <strong>Sort by:</strong>
+            <button onclick="sortActivities('start_time')">Date</button>
+            <button onclick="sortActivities('subject.code_name')">Subject Code</button>
+            <button onclick="toggleSortDirection()">Toggle ↑↓</button>
+        </div>
+    </div>
+
+    <!-- List -->
+    <ul id="activities-list" class="scrollable" style="margin-top: 15px;"></ul>
+</section>
+
+<script>
+    // Load Data
+    window.onload = async () => {
+        await Promise.all([
+            loadTeachers(),
+            loadStudents(),
+            loadSubjects(),
+            loadClassrooms(),
+            loadActivities()
+        ]);
+    };
+
+    // Teacher
+    document.getElementById("add-teacher-form").onsubmit = async e => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        await fetch("/teachers", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        e.target.reset();
+        loadTeachers();
+    };
+
+    async function loadTeachers() {
+        const res = await fetch("/teachers");
+        const list = await res.json();
+        const ul = document.getElementById("teachers-list");
+        ul.innerHTML = list.map(t =>
+            `<li>${t.title || ''} ${t.name} (Age: ${t.age || '?'})
+         <button class="delete-btn" data-id="${t.id}" data-type="teacher">Delete</button></li>`
+        ).join("");
+    }
+
+    // Student
+    const studentForm = document.getElementById("add-student-form");
+    const studentsList = document.getElementById("students-list");
+    const studentSubmitBtn = document.getElementById("student-submit-btn");
+    const studentCancelBtn = document.getElementById("student-cancel-btn");
+
+    async function loadStudents() {
+        const res = await fetch("/students");
+        const list = await res.json();
+        const ul = document.getElementById("students-list");
+        ul.innerHTML = list.map(s =>
+            `<li>${s.name} (Index: ${s.student_index}) — Lesson Group: ${s.group_lesson}, Lecture Group: ${s.group_lecture}
+            <button class="edit-btn" data-id="${s.id}">Edit</button>
+            <button class="delete-btn" data-id="${s.id}" data-type="student">Delete</button></li>`
+        ).join("");
+    }
+
+    function resetStudentForm() {
+        studentForm.reset();
+        studentForm.id.value = "";
+        studentSubmitBtn.textContent = "Add Student";
+        studentCancelBtn.style.display = "none";
+    }
+
+    studentForm.onsubmit = async e => {
+        e.preventDefault();
+        const formData = new FormData(studentForm);
+        const id = formData.get("id");
+        const data = {
+            name: formData.get("name"),
+            student_index: formData.get("student_index"),
+            group_lesson: formData.get("group_lesson") ? Number(formData.get("group_lesson")) : null,
+            group_lecture: formData.get("group_lecture") ? Number(formData.get("group_lecture")) : null
+        };
+
+        if (id) {
+            // Edit student
+            await fetch(`/students/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            // Add student
+            await fetch("/students", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
+
+        resetStudentForm();
+        loadStudents();
+    };
+
+    studentCancelBtn.onclick = () => resetStudentForm();
+
+    studentsList.onclick = async e => {
+        if (e.target.classList.contains("edit-btn")) {
+            const id = e.target.dataset.id;
+            // Fetch the single student data or from loaded list
+            const res = await fetch("/students");
+            const students = await res.json();
+            const student = students.find(s => s.id == id);
+            if (student) {
+                studentForm.id.value = student.id;
+                studentForm.name.value = student.name;
+                studentForm.student_index.value = student.student_index;
+                studentForm.group_lesson.value = student.group_lesson || "";
+                studentForm.group_lecture.value = student.group_lecture || "";
+                studentSubmitBtn.textContent = "Update Student";
+                studentCancelBtn.style.display = "inline-block";
+            }
+        }
+    };
+
+    // Subject
+    document.getElementById("add-subject-form").onsubmit = async e => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        await fetch("/data/subjects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        e.target.reset();
+        loadSubjects();
+    };
+
+    async function loadSubjects() {
+        const res = await fetch("/data/subjects");
+        const list = await res.json();
+        const ul = document.getElementById("subjects-list");
+        ul.innerHTML = list.map(s =>
+            `<li>${s.name} (${s.code_name}), ETCS: ${s.etcs}
+         <button class="delete-btn" data-id="${s.id}" data-type="subject">Delete</button></li>`
+        ).join("");
+    }
+
+    // Classroom
+    document.getElementById("add-classroom-form").onsubmit = async e => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        await fetch("/data/classrooms", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        e.target.reset();
+        loadClassrooms();
+    };
+
+    async function loadClassrooms() {
+        const res = await fetch("/data/classrooms");
+        const list = await res.json();
+        const ul = document.getElementById("classrooms-list");
+        ul.innerHTML = list.map(c =>
+            `<li>${c.adress}
+         <button class="delete-btn" data-id="${c.id}" data-type="classroom">Delete</button></li>`
+        ).join("");
+    }
+
+    // Activities
+    document.getElementById("add-activity-form").onsubmit = async e => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        await fetch("/data/activities", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        e.target.reset();
+        loadActivities();
+    };
+
+    let allActivities = [];
+    let sortField = 'start_time';
+    let sortAsc = true;
+
+    async function loadActivities() {
+        const res = await fetch("/data/activities");
+        allActivities = await res.json();
+        renderActivities(allActivities);
+    }
+
+    function applyFilters() {
+        const date = document.getElementById('filter-date').value;
+        const code = document.getElementById('filter-code').value.toLowerCase();
+        let filtered = [...allActivities];
+
+        if (date) {
+            filtered = filtered.filter(a => a.start_time.startsWith(date));
+        }
+
+        if (code) {
+            filtered = filtered.filter(a => (a.subject?.code_name || '').toLowerCase().includes(code));
+        }
+
+        renderActivities(filtered);
+    }
+
+    function clearFilters() {
+        document.getElementById('filter-date').value = '';
+        document.getElementById('filter-code').value = '';
+        renderActivities(allActivities);
+    }
+
+    function sortActivities(field) {
+        sortField = field;
+        renderActivities(allActivities);
+    }
+
+    function toggleSortDirection() {
+        sortAsc = !sortAsc;
+        renderActivities(allActivities);
+    }
+
+    function resolveField(obj, path) {
+        return path.split('.').reduce((o, key) => (o ? o[key] : ''), obj) || '';
+    }
+
+    function renderActivities(list) {
+        const listEl = document.getElementById("activities-list");
+        listEl.innerHTML = '';
+
+        const sorted = [...list].sort((a, b) => {
+            const valA = resolveField(a, sortField);
+            const valB = resolveField(b, sortField);
+            if (valA < valB) return sortAsc ? -1 : 1;
+            if (valA > valB) return sortAsc ? 1 : -1;
+            return 0;
+        });
+
+        sorted.forEach(a => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+          <strong>${a.subject?.name || 'No subject'}</strong>
+          (${a.subject?.code_name || '-'}) — ${new Date(a.start_time).toLocaleString()}
+          <br>
+          <small>${a.type || ''} with ${a.teacher?.name || 'N/A'} in ${a.classroom?.adress || 'N/A'} (${a.duration || 0} mins)</small>
+          <button class="delete-btn" data-id="${a.id}" data-type="activity">Delete</button>
+        `;
+            listEl.appendChild(li);
+        });
+    }
+
+    // Delete handler
+    document.addEventListener("click", async e => {
+        if (e.target.classList.contains("delete-btn")) {
+            const id = e.target.dataset.id;
+            const type = e.target.dataset.type;
+            await fetch(`/${type}s/${id}`, { method: "DELETE" });
+            if (type === "teacher") loadTeachers();
+            else if (type === "subject") loadSubjects();
+            else if (type === "classroom") loadClassrooms();
+            else if (type === "activity") loadActivities();
+            else if (type === "student") loadStudents();
+        }
+    });
+</script>
+</body>
+</html>
