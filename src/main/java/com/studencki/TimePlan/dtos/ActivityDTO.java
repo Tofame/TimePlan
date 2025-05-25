@@ -13,5 +13,5 @@ public class ActivityDTO {
     private int duration;
     private int type;
 
-    private Integer groupNumber;
+    private Long groupNumber;
 }

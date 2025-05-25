@@ -40,8 +40,8 @@ public class StudentService {
         Student existing = studentRepository.findById(id).orElseThrow();
         existing.setName(updateStudent.getName());
         existing.setStudentIndex(updateStudent.getStudentIndex());
-        existing.setGroupLesson(updateStudent.getGroupLesson());
-        existing.setGroupLecture(updateStudent.getGroupLecture());
+        existing.setGroupLessonId(updateStudent.getGroupLessonId());
+        existing.setGroupLectureId(updateStudent.getGroupLectureId());
         return studentRepository.save(existing);
     }
 
@@ -56,8 +56,8 @@ public class StudentService {
     public Optional<StudentGroupDTO> getStudentGroups(String studentIndex) {
         return studentRepository.findByStudentIndex(studentIndex)
                 .map(student -> new StudentGroupDTO(
-                        student.getGroupLecture(),
-                        student.getGroupLesson()
+                        student.getGroupLectureId(),
+                        student.getGroupLessonId()
                 ));
     }
 }

@@ -23,7 +23,7 @@ public class Activity {
     @Enumerated(EnumType.ORDINAL)
     private ActivityType type;
     @Column(name = "group_number")
-    private int groupNumber;
+    private Long groupNumber;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = true)

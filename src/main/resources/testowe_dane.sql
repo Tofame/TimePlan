@@ -25,8 +25,19 @@ INSERT INTO subject (name, etcs, code_name) VALUES
 ('Systemy Operacyjne', 5, 'OS505'),
 ('Technologie Programowania Rozproszonego', 5, 'TPO');
 
+-- Insert ActivityGroups (LECTURES, LESSONS etc.)
+INSERT INTO Activity_Group (type, group_number) VALUES
+( 0, 5),
+( 0, 5),
+( 1, 5),
+( 1, 5),
+( 0, 6),
+( 0, 6),
+( 1, 6),
+( 1, 6);
+
 -- Insert Students
-INSERT INTO student (name, student_index, group_lesson, group_lecture, password) VALUES
+INSERT INTO student (name, student_index, group_lesson_id, group_lecture_id, password) VALUES
 ('Zofia Ziewalska', 's123', 5, 5, '123'),
 ('Janek Drzemka', 's404', 6, 6, '123');
 

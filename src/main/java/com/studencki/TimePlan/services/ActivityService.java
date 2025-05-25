@@ -84,9 +84,9 @@ public class ActivityService {
 
     public int getStudentCount(Activity activity) {
         if (activity.getType() == ActivityType.LECTURE) {
-            return studentRepository.countByGroupLecture(activity.getGroupNumber());
+            return studentRepository.countByGroupLectureId(activity.getGroupNumber());
         } else {
-            return studentRepository.countByGroupLesson(activity.getGroupNumber());
+            return studentRepository.countByGroupLessonId(activity.getGroupNumber());
         }
     }
 

@@ -13,17 +13,13 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @ToString
 @Entity
-public class Student {
+@Table(name = "Activity_Group")
+public class ActivityGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    @Column(name = "student_index")
-    private String studentIndex;
-    private String password;
-
-    @Column(name = "group_lesson_id")
-    private Long groupLessonId;
-    @Column(name = "group_lecture_id")
-    private Long groupLectureId;
+    @Enumerated(EnumType.ORDINAL)
+    private ActivityType type;
+    @Column(name = "group_number")
+    private int groupNumber;
 }
