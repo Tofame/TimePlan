@@ -33,6 +33,33 @@
             padding: 4px;
             font-size: 12px;
             border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .activity .tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+            position: absolute;
+            z-index: 100;
+            bottom: 100%; /* show above */
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .activity:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
         }
 
         /* Lets colorize the weekdays to orange cause I like orange */
@@ -142,6 +169,17 @@
                     <strong>${activity.subject?.name || 'N/A'}</strong><br>
                     ${activity.teacher?.name || ''}<br>
                     Room: ${activity.classroom?.adress || 'N/A'}
+                    <div class="tooltip">
+                        Teacher: ${activity.teacher?.title || ''} ${activity.teacher?.name || ''} (Age: ${activity.teacher?.age || 'N/A'})<br>
+                        Room: ${activity.classroom?.adress || 'N/A'}<br>
+                        Subject Code: ${activity.subject?.code_name || 'N/A'}<br>
+                        ETCS: ${activity.subject?.etcs || 'N/A'}<br>
+                        Students: ${activity.student_count || 'N/A'}<br>
+                        Type: ${activity.type || 'N/A'}<br>
+                        Start: ${new Date(activity.start_time).toLocaleString()}<br>
+                        End: ${calculateEndTime(activity.start_time, activity.duration || 0).toLocaleTimeString()}<br>
+                        Duration: ${formatDuration(activity.duration || 0)}
+                    </div>
                 `;
                 cell.appendChild(div);
             }
@@ -168,6 +206,25 @@
             date.setDate(date.getDate() + i);
             th.innerHTML = `${dayNames[i]}<br>${date.getDate()}`;
         }
+    }
+
+    function formatDuration(minutes) {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        let result = '';
+        if (h > 0) {
+            result += `${h}h `;
+        }
+        if (m > 0 || h === 0) {
+            result += `${m} min`;
+        }
+        return result.trim();
+    }
+
+    function calculateEndTime(startTime, durationMinutes) {
+        const startDate = new Date(startTime);
+        const endDate = new Date(startDate.getTime() + durationMinutes * 60000); // 60000 ms = 1 minute
+        return endDate;
     }
 
     // Handlers for buttons
