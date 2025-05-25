@@ -34,6 +34,12 @@
             font-size: 12px;
             border-radius: 4px;
         }
+
+        /* Lets colorize the weekdays to orange cause I like orange */
+        #timetable thead th {
+            background-color: orange;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +89,8 @@
         friday.setDate(friday.getDate() + 4);
         const fridayStr = formatDate(friday);
         document.getElementById('currentWeekLabel').textContent = `${mondayStr} - ${fridayStr}`;
+
+        updateWeekDaysHeader();
     }
 
     function createEmptyGrid() {
@@ -148,6 +156,18 @@
         // Compare only date part ignoring time
         const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         return d >= monday && d <= friday;
+    }
+
+    function updateWeekDaysHeader() {
+        const dayNames = ['Pon.', 'Wt.', 'Śr.', 'Czw.', 'Pt.'];
+        const thead = document.querySelector('#timetable thead tr');
+
+        for(let i = 0; i < 5; i++) {
+            const th = thead.children[i + 1];
+            const date = new Date(currentWeekMonday);
+            date.setDate(date.getDate() + i);
+            th.innerHTML = `${dayNames[i]}<br>${date.getDate()}`;
+        }
     }
 
     // Handlers for buttons
