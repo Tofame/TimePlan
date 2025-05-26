@@ -20,10 +20,8 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Enumerated(EnumType.ORDINAL)
-    private ActivityType type;
-    @Column(name = "group_number")
-    private Long groupNumber;
+    @Column(name = "group_id")
+    private Long groupId;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = true)

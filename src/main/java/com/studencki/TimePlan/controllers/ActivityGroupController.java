@@ -50,4 +50,11 @@ public class ActivityGroupController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}/groupNumber")
+    public ResponseEntity<Integer> getGroupNumberById(@PathVariable Long id) {
+        Optional<Integer> groupNumber = activityGroupService.getGroupNumberById(id);
+        return groupNumber.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

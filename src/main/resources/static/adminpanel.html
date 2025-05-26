@@ -66,10 +66,10 @@
     <h2>Activity Groups</h2>
     <form id="add-group-form">
         <input type="hidden" name="id" />
-        <label for="type">Activity Type:</label>
-        <input type="number" name="type" placeholder="Type (0 - Lesson, 1 - Lecture)" required min="0" max="1" />
+        <label for="typeActivity">Activity Type:</label>
+        <input type="number" id="typeActivity" name="type" placeholder="Type (0 - Lesson, 1 - Lecture)" required min="0" max="1" />
         <label for="groupNumber">Group Number:</label>
-        <input type="number" name="groupNumber" placeholder="Group Number" required min="0" />
+        <input type="number" id="groupNumber" name="groupNumber" placeholder="Group Number" required min="0" />
         <button type="submit" id="group-submit-btn">Add Group</button>
         <button type="button" id="group-cancel-btn" style="display:none;">Cancel</button>
     </form>
@@ -201,7 +201,7 @@
 
         groupsList.innerHTML = groups.map(g =>
             `<li>Type: ${g.type} — Group Number: ${g.groupNumber}
-            <button class="edit-btn" data-id="${g.id}">Edit</button>
+            <button class="edit-btn" data-id="${g.id}" data-type="${g.type}" data-groupnumber="${g.groupNumber}">Edit</button>
             <button class="delete-btn" data-id="${g.id}" data-type="activitiesGroups">Delete</button>
         </li>`
         ).join("");
@@ -243,6 +243,9 @@
 
         resetGroupForm();
         loadActivitiesGroups();
+
+        // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+        loadActivityDropdowns();
     };
 
     groupCancelBtn.onclick = () => resetGroupForm();
@@ -250,17 +253,25 @@
     // Click handlers on groups list for Edit/Delete buttons
     groupsList.onclick = async e => {
         if (e.target.classList.contains("edit-btn")) {
-            const id = e.target.dataset.id;
+            const groupNumber = e.target.dataset.groupnumber;
+            const type = e.target.dataset.type;
             const res = await fetch("/data/activitiesGroups");
             const groups = await res.json();
-            const group = groups.find(g => g.id == id);
+            const group = groups.find(g => g.groupNumber == groupNumber && g.type == type);
+
+            const ActivityTypeMap = {
+                LESSON: 0,
+                LECTURE: 1
+            };
 
             if (group) {
-                groupForm.id.value = group.id;
-                groupForm.type.value = group.type;
-                groupForm.groupNumber.value = group.groupNumber;
+                groupForm.querySelector('input[name="id"]').value = group.id;
+                groupForm.querySelector('input[name="type"]').value = ActivityTypeMap[group.type];
+                groupForm.querySelector('input[name="groupNumber"]').value = group.groupNumber;
                 groupSubmitBtn.textContent = "Update Group";
                 groupCancelBtn.style.display = "inline-block";
+            } else {
+                console.log("GROUP NOT FOUND " + type + " number: " + groupNumber)
             }
         }
     };
@@ -333,6 +344,9 @@
 
         resetTeacherForm();
         loadTeachers();
+
+        // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+        loadActivityDropdowns();
     };
 
     teacherCancelBtn.onclick = () => resetTeacherForm();
@@ -365,8 +379,17 @@
         const res = await fetch("/data/students");
         const list = await res.json();
         const ul = document.getElementById("students-list");
+
+        // Fetch all activity groups, we will be doing group id -> group number
+        const resGroups = await fetch("/data/activitiesGroups");
+        const groups = await resGroups.json();
+        const groupMap = {};
+        groups.forEach(g => {
+            groupMap[g.id] = g.groupNumber;
+        });
+
         ul.innerHTML = list.map(s =>
-            `<li>${s.name} (Index: ${s.studentIndex}) — Lesson Group: ${s.groupLessonId}, Lecture Group: ${s.groupLectureId}
+            `<li>${s.name} (Index: ${s.studentIndex}) — Lesson Group: ${groupMap[s.groupLessonId] ?? 'N/A'}, Lecture Group: ${groupMap[s.groupLectureId] ?? 'N/A'}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
             <button class="delete-btn" data-id="${s.id}" data-type="students">Delete</button></li>`
         ).join("");
@@ -386,9 +409,12 @@
         const data = {
             name: formData.get("name"),
             studentIndex: formData.get("studentIndex"),
+            password: "temp",
             groupLessonId: formData.get("groupLessonId") ? Number(formData.get("groupLessonId")) : null,
-            groupLectureId: formData.get("groupLectureId") ? Number(formData.get("groupLectureId")) : null
+            groupLectureId: formData.get("groupLectureId") ? Number(formData.get("groupLectureId")) : null,
         };
+
+        console.log("Data being sent:", data);
 
         if (id) {
             // Edit student
@@ -408,6 +434,9 @@
 
         resetStudentForm();
         loadStudents();
+
+        // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+        loadActivityDropdowns();
     };
 
     studentCancelBtn.onclick = () => resetStudentForm();
@@ -486,6 +515,9 @@
 
         resetSubjectForm();
         loadSubjects();
+
+        // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+        loadActivityDropdowns();
     };
 
     subjectsList.onclick = async e => {
@@ -556,6 +588,9 @@
 
         resetClassroomForm();
         loadClassrooms();
+
+        // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+        loadActivityDropdowns();
     };
 
     classroomsList.onclick = async e => {
@@ -595,6 +630,9 @@
 
         e.target.reset();
         loadActivities();
+
+        // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+        loadActivityDropdowns();
     };
 
     let allActivities = [];
@@ -735,6 +773,9 @@
             else if (type === "activities") loadActivities();
             else if (type === "students") loadStudents();
             else if (type === "activitiesGroups") loadActivitiesGroups();
+
+            // TO-DO reloadDropdown(type) instead of reloading all, for better performance
+            loadActivityDropdowns();
         }
     });
 </script>

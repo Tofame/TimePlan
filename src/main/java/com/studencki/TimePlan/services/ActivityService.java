@@ -20,19 +20,25 @@ public class ActivityService {
     private final TeacherRepository teacherRepository;
     private final ClassroomRepository classroomRepository;
     private final StudentRepository studentRepository;
+    private final ActivityGroupRepository groupRepository;
+    private final ActivityGroupService activityGroupService;
 
     public ActivityService(
         ActivityRepository activityRepository,
        SubjectRepository subjectRepository,
        TeacherRepository teacherRepository,
        ClassroomRepository classroomRepository,
-       StudentRepository studentRepository
+       StudentRepository studentRepository,
+        ActivityGroupRepository groupRepository,
+        ActivityGroupService activityGroupService
     ) {
         this.activityRepository = activityRepository;
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
         this.classroomRepository = classroomRepository;
         this.studentRepository = studentRepository;
+        this.groupRepository = groupRepository;
+        this.activityGroupService = activityGroupService;
     }
 
     public List<Activity> getAllActivities() {
@@ -45,8 +51,7 @@ public class ActivityService {
 
     public Optional<Activity> editActivity(Long id, Activity updatedActivity) {
         return activityRepository.findById(id).map(activity -> {
-            activity.setType(updatedActivity.getType());
-            activity.setGroupNumber(updatedActivity.getGroupNumber());
+            activity.setGroupId(updatedActivity.getGroupId());
             activity.setSubject(updatedActivity.getSubject());
             activity.setClassroom(updatedActivity.getClassroom());
             activity.setTeacher(updatedActivity.getTeacher());
@@ -77,24 +82,25 @@ public class ActivityService {
         activity.setClassroom(classroomRepository.findById(dto.getClassroom_id()).orElse(null));
         activity.setStartTime(LocalDateTime.parse(dto.getStartTime()));
         activity.setDuration(dto.getDuration());
-        activity.setType(ActivityType.values()[dto.getType()]);
-        activity.setGroupNumber(dto.getGroupNumber() != null ? dto.getGroupNumber() : 0);
+        activity.setGroupId(dto.getGroupId() != null ? dto.getGroupId() : 0);
         return activity;
     }
 
     public int getStudentCount(Activity activity) {
-        if (activity.getType() == ActivityType.LECTURE) {
-            return studentRepository.countByGroupLectureId(activity.getGroupNumber());
+        ActivityType groupType = activityGroupService.getGroupTypeById(activity.getGroupId());
+
+        if (groupType == ActivityType.LECTURE) {
+            return studentRepository.countByGroupLectureId(activity.getGroupId());
         } else {
-            return studentRepository.countByGroupLessonId(activity.getGroupNumber());
+            return studentRepository.countByGroupLessonId(activity.getGroupId());
         }
     }
 
-    public List<Activity> getLectureActivities(int groupNumber) {
-        return activityRepository.findByTypeAndGroupNumber(ActivityType.LECTURE, groupNumber);
+    public List<Activity> getLectureActivities(int groupId) {
+        return activityRepository.findByGroupId(groupId);
     }
 
-    public List<Activity> getLessonActivities(int groupNumber) {
-        return activityRepository.findByTypeAndGroupNumber(ActivityType.LESSON, groupNumber);
+    public List<Activity> getLessonActivities(int groupId) {
+        return activityRepository.findByGroupId(groupId);
     }
 }

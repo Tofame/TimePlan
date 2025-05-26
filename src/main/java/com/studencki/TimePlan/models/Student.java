@@ -24,6 +24,7 @@ public class Student {
 
     @Column(name = "group_lesson_id")
     private Long groupLessonId;
+
     @Column(name = "group_lecture_id")
     private Long groupLectureId;
 }

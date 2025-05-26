@@ -28,18 +28,14 @@ INSERT INTO subject (name, etcs, code_name) VALUES
 -- Insert ActivityGroups (LECTURES, LESSONS etc.)
 INSERT INTO Activity_Group (type, group_number) VALUES
 ( 0, 5),
-( 0, 5),
-( 1, 5),
 ( 1, 5),
 ( 0, 6),
-( 0, 6),
-( 1, 6),
 ( 1, 6);
 
 -- Insert Students
 INSERT INTO student (name, student_index, group_lesson_id, group_lecture_id, password) VALUES
-('Zofia Ziewalska', 's123', 5, 5, '123'),
-('Janek Drzemka', 's404', 6, 6, '123');
+('Zofia Ziewalska', 's123', 0, 1, '123'),
+('Janek Drzemka', 's404', 0, 1, '123');
 
 -- Insert Classrooms
 INSERT INTO classroom (address) VALUES
@@ -52,52 +48,52 @@ INSERT INTO classroom (address) VALUES
 
 -- Inserts activities
 INSERT INTO activity (
-    type, group_number, subject_id, classroom_id, teacher_id,
+    group_id, subject_id, classroom_id, teacher_id,
     start_time, duration
 ) VALUES
-      (0, 5, 3, 3, 3,  '2025-05-05T09:00', 90),  -- Analiza Danych
-      (1, 5, 4, 4, 4,  '2025-05-07T11:00', 60),  -- Wstęp do Programowania
-      (0, 6, 5, 5, 5,  '2025-05-08T14:00', 90),  -- Zmadowana Matematyka
+      (1, 3, 3, 3,  '2025-05-05T09:00', 90),  -- Analiza Danych (5,0)
+      (2, 4, 4, 4,  '2025-05-07T11:00', 60),  -- Wstęp do Programowania (5,1)
+      (3, 5, 5, 5,  '2025-05-08T14:00', 90),  -- Zmadowana Matematyka (6,0)
 
-      (0, 5, 1, 1, 1,  '2025-05-12T10:00', 90),  -- Zaawansowana Prokrastynacja
-      (1, 5, 2, 2, 2,  '2025-05-14T13:00', 60),  -- Kawaologia stosowana
-      (0, 6, 7, 3, 4,  '2025-05-19T08:00', 90),  -- Sadystyczna Analiza Danych
-      (1, 5, 6, 4, 3,  '2025-05-21T12:00', 60),  -- Metody Statystyczne
-      (0, 6, 5, 5, 5,  '2025-05-22T15:00', 90),  -- Zmadowana Matematyka
+      (1, 1, 1, 1,  '2025-05-12T10:00', 90),  -- Zaawansowana Prokrastynacja (5,0)
+      (2, 2, 2, 2,  '2025-05-14T13:00', 60),  -- Kawaologia stosowana (5,1)
+      (3, 7, 3, 4,  '2025-05-19T08:00', 90),  -- Sadystyczna Analiza Danych (6,0)
+      (2, 6, 4, 3,  '2025-05-21T12:00', 60),  -- Metody Statystyczne (5,1)
+      (3, 5, 5, 5,  '2025-05-22T15:00', 90),  -- Zmadowana Matematyka (6,0)
 
-      (0, 5, 8, 1, 1,  '2025-05-13T08:00', 90),  -- Programowanie w Javie
-      (1, 6, 9, 2, 2,  '2025-05-13T11:00', 60),  -- Sieci Komputerowe
-      (0, 5, 10, 3, 3,  '2025-05-14T14:00', 90), -- Bezpieczeństwo IT
-      (1, 6, 11, 4, 4, '2025-05-15T12:00', 60), -- Sztuczna Inteligencja
-      (0, 5, 12, 5, 5, '2025-05-16T10:00', 90), -- Bazy Danych
+      (1, 8, 1, 1,  '2025-05-13T08:00', 90),  -- Programowanie w Javie (5,0)
+      (4, 9, 2, 2,  '2025-05-13T11:00', 60),  -- Sieci Komputerowe (6,1)
+      (1, 10, 3, 3, '2025-05-14T14:00', 90),  -- Bezpieczeństwo IT (5,0)
+      (4, 11, 4, 4, '2025-05-15T12:00', 60),  -- Sztuczna Inteligencja (6,1)
+      (1, 12, 5, 5, '2025-05-16T10:00', 90),  -- Bazy Danych (5,0)
 
-      (0, 6, 13, 1, 1,  '2025-05-19T13:00', 90), -- Projektowanie UX/UI
-      (1, 5, 14, 2, 2,  '2025-05-20T11:00', 60), -- Analiza Algorytmów
-      (0, 6, 15, 3, 3,  '2025-05-21T08:00', 90), -- Systemy Operacyjne
+      (3, 13, 1, 1, '2025-05-19T13:00', 90),  -- Projektowanie UX/UI (6,0)
+      (2, 14, 2, 2, '2025-05-20T11:00', 60),  -- Analiza Algorytmów (5,1)
+      (3, 15, 3, 3, '2025-05-21T08:00', 90),  -- Systemy Operacyjne (6,0)
 
-      (0, 5, 3, 3, 3, '2025-05-26T09:00', 90),  -- Analiza Danych, sala 3, Marek Kowalski
-      (1, 5, 4, 4, 4, '2025-05-27T11:00', 60),  -- Wstęp do Programowania, sala 4, Joanna Nowak
-      (0, 5, 16, 6, 5,  '2025-05-27T15:45', 90),  -- TPO
-      (0, 6, 5, 5, 5, '2025-05-28T14:00', 90),  -- Zmadowana Matematyka, sala 5, Tomasz Jawa
-      (0, 5, 1, 1, 1,  '2025-05-29T10:00', 90),  -- Zaawansowana Prokrastynacja, sala 1, Andrzej Piątek
-      (1, 5, 2, 2, 2, '2025-05-30T13:00', 60),  -- Kawaologia stosowana, sala 2, Halina Sobotka
+      (1, 3, 3, 3, '2025-05-26T09:00', 90),   -- Analiza Danych (5,0)
+      (2, 4, 4, 4, '2025-05-27T11:00', 60),   -- Wstęp do Programowania (5,1)
+      (1, 16, 6, 5, '2025-05-27T15:45', 90),  -- TPO (5,0)
+      (3, 5, 5, 5, '2025-05-28T14:00', 90),   -- Zmadowana Matematyka (6,0)
+      (1, 1, 1, 1, '2025-05-29T10:00', 90),   -- Zaawansowana Prokrastynacja (5,0)
+      (2, 2, 2, 2, '2025-05-30T13:00', 60),   -- Kawaologia stosowana (5,1)
 
-      (0, 5, 1, 1, 1, '2025-06-02T09:00', 90),  -- Zaawansowana Prokrastynacja
-      (1, 5, 2, 2, 2,  '2025-06-04T11:00', 60),  -- Kawaologia stosowana
-      (0, 6, 3, 3, 3,  '2025-06-05T14:00', 90),  -- Analiza Danych
+      (1, 1, 1, 1, '2025-06-02T09:00', 90),   -- Zaawansowana Prokrastynacja (5,0)
+      (2, 2, 2, 2, '2025-06-04T11:00', 60),   -- Kawaologia stosowana (5,1)
+      (3, 3, 3, 3, '2025-06-05T14:00', 90),   -- Analiza Danych (6,0)
 
-      (0, 5, 4, 4, 4,  '2025-06-09T10:00', 90),  -- Wstęp do Programowania
-      (1, 6, 7, 5, 5, '2025-06-11T13:00', 60),  -- Sadystyczna Analiza Danych
-      (0, 5, 1, 1, 1, '2025-06-16T08:00', 90),  -- Zaawansowana Prokrastynacja
-      (1, 5, 2, 2, 2, '2025-06-18T12:00', 60),  -- Kawaologia stosowana
-      (0, 6, 3, 3, 3, '2025-06-20T14:00', 90),  -- Analiza Danych
+      (1, 4, 4, 4, '2025-06-09T10:00', 90),   -- Wstęp do Programowania (5,0)
+      (4, 7, 5, 5, '2025-06-11T13:00', 60),   -- Sadystyczna Analiza Danych (6,1)
+      (1, 1, 1, 1, '2025-06-16T08:00', 90),   -- Zaawansowana Prokrastynacja (5,0)
+      (2, 2, 2, 2, '2025-06-18T12:00', 60),   -- Kawaologia stosowana (5,1)
+      (3, 3, 3, 3, '2025-06-20T14:00', 90),   -- Analiza Danych (6,0)
 
-      (0, 5, 8, 1, 1, '2025-06-17T08:00', 90),  -- Programowanie w Javie
-      (1, 6, 9, 2, 2, '2025-06-18T11:00', 60),  -- Sieci Komputerowe
-      (0, 5, 10, 3, 3, '2025-06-19T14:00', 90), -- Bezpieczeństwo IT
-      (1, 6, 11, 4, 4, '2025-06-20T12:00', 60), -- Sztuczna Inteligencja
-      (0, 5, 12, 5, 5,'2025-06-21T10:00', 90), -- Bazy Danych
+      (1, 8, 1, 1, '2025-06-17T08:00', 90),   -- Programowanie w Javie (5,0)
+      (4, 9, 2, 2, '2025-06-18T11:00', 60),   -- Sieci Komputerowe (6,1)
+      (1, 10, 3, 3, '2025-06-19T14:00', 90),  -- Bezpieczeństwo IT (5,0)
+      (4, 11, 4, 4, '2025-06-20T12:00', 60),  -- Sztuczna Inteligencja (6,1)
+      (1, 12, 5, 5, '2025-06-21T10:00', 90),  -- Bazy Danych (5,0)
 
-      (0, 6, 13, 1, 1, '2025-06-23T13:00', 90), -- Projektowanie UX/UI
-      (1, 5, 14, 2, 2, '2025-06-24T11:00', 60), -- Analiza Algorytmów
-      (0, 6, 15, 3, 3, '2025-06-25T08:00', 90); -- Systemy Operacyjne
+      (3, 13, 1, 1, '2025-06-23T13:00', 90),  -- Projektowanie UX/UI (6,0)
+      (2, 14, 2, 2, '2025-06-24T11:00', 60),  -- Analiza Algorytmów (5,1)
+      (3, 15, 3, 3, '2025-06-25T08:00', 90);  -- Systemy Operacyjne (6,0)

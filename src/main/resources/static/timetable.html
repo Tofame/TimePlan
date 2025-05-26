@@ -182,11 +182,11 @@
             }
 
             const groups = await groupRes.json();
-            const { groupLecture, groupLesson } = groups;
+            const { groupLectureId, groupLessonId } = groups;
 
             const [lectureRes, lessonRes] = await Promise.all([
-                fetch(`/data/activities/lectures/${groupLecture}`),
-                fetch(`/data/activities/lessons/${groupLesson}`)
+                fetch(`/data/activities/lectures/${groupLectureId}`),
+                fetch(`/data/activities/lessons/${groupLessonId}`)
             ]);
 
             if (!lectureRes.ok || !lessonRes.ok) {

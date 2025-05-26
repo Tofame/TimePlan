@@ -11,5 +11,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findAllByTeacherId(Long teacherId);
     List<Activity> findAllBySubjectId(Long subjectId);
     List<Activity> findAllByClassroomId(Long classroomId);
-    List<Activity> findByTypeAndGroupNumber(ActivityType type, int groupNumber);
+    List<Activity> findByGroupId(int groupId);
 }

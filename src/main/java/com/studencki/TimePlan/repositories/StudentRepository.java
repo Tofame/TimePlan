@@ -14,4 +14,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     int countByGroupLessonId(Long groupNumber);
     Optional<Student> findByStudentIndexAndPassword(String studentIndex, String password);
     Optional<Student> findByStudentIndex(String studentIndex);
+
+    List<Student> findAllByGroupLessonId(Long groupId);
+    List<Student> findAllByGroupLectureId(Long groupId);
 }
