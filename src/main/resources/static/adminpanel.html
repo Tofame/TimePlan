@@ -140,10 +140,7 @@
         <label for="startTime">Start Time:</label>
         <input type="text" id="startTime" name="startTime" required>
         <input type="number" name="duration" placeholder="Duration (minutes)" required />
-        <select name="activity_type">
-            <option value="">Select Activity Type</option>
-        </select>
-        <input type="number" name="groupNumber" placeholder="1" value="1" required />
+        <input type="number" name="groupId" placeholder="1" value="1" required />
         <button type="submit">Add Activity</button>
     </form>
 
@@ -620,8 +617,7 @@
             classroom_id: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
             startTime: formData.get("startTime"),
             duration: formData.get("duration") ? Number(formData.get("duration")) : null,
-            type: formData.get("activity_type") ? Number(formData.get("activity_type")) : 0,
-            groupNumber: formData.get("groupNumber") ? Number(formData.get("groupNumber")) : null,
+            groupId: formData.get("groupId") ? Number(formData.get("groupId")) : null,
         };
 
         await fetch("/data/activities", {
@@ -739,12 +735,6 @@
         classroomSelect.innerHTML = '<option value="">Select Classroom</option>' + classrooms.map(c =>
             `<option value="${c.id}">${c.address}</option>`
         ).join('');
-
-        const activityTypeSelect = document.querySelector('select[name="activity_type"]');
-        activityTypeSelect.innerHTML = '<option value="">Select Activity Type</option>';
-        for (const [value, name] of Object.entries(activityTypes)) {
-            activityTypeSelect.innerHTML += `<option value="${value}">${name}</option>`;
-        }
 
         // Populate groupLessonId and groupLectureId dropdowns
         const groupLessonSelect = document.getElementById('group-lesson-select');
