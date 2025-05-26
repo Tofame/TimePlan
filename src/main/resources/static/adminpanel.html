@@ -140,7 +140,8 @@
         <label for="startTime">Start Time:</label>
         <input type="text" id="startTime" name="startTime" required>
         <input type="number" name="duration" placeholder="Duration (minutes)" required />
-        <input type="number" name="groupId" placeholder="1" value="1" required />
+        <label for="group-id-selector">Group:</label>
+        <select name="groupIdSelector" id="group-id-selector"></select>
         <button type="submit">Add Activity</button>
     </form>
 
@@ -617,7 +618,7 @@
             classroom_id: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
             startTime: formData.get("startTime"),
             duration: formData.get("duration") ? Number(formData.get("duration")) : null,
-            groupId: formData.get("groupId") ? Number(formData.get("groupId")) : null,
+            groupId: formData.get("groupIdSelector") ? Number(formData.get("groupIdSelector")) : null,
         };
 
         await fetch("/data/activities", {
@@ -739,17 +740,26 @@
         // Populate groupLessonId and groupLectureId dropdowns
         const groupLessonSelect = document.getElementById('group-lesson-select');
         const groupLectureSelect = document.getElementById('group-lecture-select');
+        const groupIdSelector = document.getElementById('group-id-selector');
 
         groupLessonSelect.innerHTML = '<option value="">Select Lesson Group</option>';
         groupLectureSelect.innerHTML = '<option value="">Select Lecture Group</option>';
+        groupIdSelector.innerHTML = '<option value="">Select Group</option>';
 
         activitiesGroups.forEach(group => {
+            let typeWord = "N/A";
+
             const option = `<option value="${group.id}">Group ${group.groupNumber}</option>`;
             if (group.type === "LESSON") {
+                typeWord = "LESSON"
                 groupLessonSelect.innerHTML += option;
             } else if (group.type === "LECTURE") {
+                typeWord = "LECTURE"
                 groupLectureSelect.innerHTML += option;
             }
+
+            const generalOption = `<option value="${group.id}">Group ${typeWord} ${group.groupNumber}</option>`;
+            groupIdSelector.innerHTML += generalOption;
         });
     }
 
