@@ -6,6 +6,7 @@ import com.studencki.TimePlan.models.Activity;
 import com.studencki.TimePlan.models.ActivityType;
 import com.studencki.TimePlan.models.Classroom;
 import com.studencki.TimePlan.repositories.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,7 +43,12 @@ public class ActivityService {
     }
 
     public List<Activity> getAllActivities() {
-        return activityRepository.findAll();
+        return getAllActivities("id", true);
+    }
+
+    public List<Activity> getAllActivities(String sortBy, boolean ascending) {
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        return activityRepository.findAll(sort);
     }
 
     public Activity addActivity(Activity activity) {

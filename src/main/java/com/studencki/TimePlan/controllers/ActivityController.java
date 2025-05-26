@@ -21,9 +21,13 @@ public class ActivityController {
         this.activityService = activityService;
     }
 
+    // Ex: /data/activities?sortBy=duration&asc=true
     @GetMapping
-    public List<Activity> getAllActivities() {
-        return activityService.getAllActivities();
+    public List<Activity> getAllActivities(
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "true") boolean asc
+    ) {
+        return activityService.getAllActivities(sortBy, asc);
     }
 
     @GetMapping("/lectures/{groupId}")
