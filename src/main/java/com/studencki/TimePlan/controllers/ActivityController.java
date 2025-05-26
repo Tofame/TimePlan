@@ -1,6 +1,7 @@
 package com.studencki.TimePlan.controllers;
 
 import com.studencki.TimePlan.dtos.ActivityDTO;
+import com.studencki.TimePlan.dtos.ActivityGroupDTO;
 import com.studencki.TimePlan.models.Activity;
 import com.studencki.TimePlan.models.ActivityType;
 import com.studencki.TimePlan.models.Classroom;

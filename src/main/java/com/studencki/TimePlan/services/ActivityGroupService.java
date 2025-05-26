@@ -37,7 +37,7 @@ public class ActivityGroupService {
 
     public ActivityGroup addGroup(ActivityGroupDTO activityGroupDTO) {
         ActivityGroup activityGroup = new ActivityGroup();
-        activityGroup.setType(ActivityType.fromValue(activityGroupDTO.getType()));
+        activityGroup.setType(activityGroupDTO.getType());
         activityGroup.setGroupNumber(activityGroupDTO.getGroupNumber());
         return activityGroupRepository.save(activityGroup);
     }
@@ -78,7 +78,7 @@ public class ActivityGroupService {
     }
 
     public boolean deleteByTypeAndGroupNumber(ActivityGroupDTO dto) {
-        Optional<ActivityGroup> groupOpt = activityGroupRepository.findByTypeAndGroupNumber(ActivityType.fromValue(dto.getType()), dto.getGroupNumber());
+        Optional<ActivityGroup> groupOpt = activityGroupRepository.findByTypeAndGroupNumber(dto.getType(), dto.getGroupNumber());
         if (groupOpt.isPresent()) {
             activityGroupRepository.delete(groupOpt.get());
             return true;
@@ -94,5 +94,14 @@ public class ActivityGroupService {
         return activityGroupRepository.findById(groupId)
                 .map(ActivityGroup::getType)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
+    }
+
+    public Optional<ActivityGroupDTO> getGroupInfoById(Long id) {
+        return activityGroupRepository.findById(id).map(group -> {
+            ActivityGroupDTO dto = new ActivityGroupDTO();
+            dto.setType(group.getType());
+            dto.setGroupNumber(group.getGroupNumber());
+            return dto;
+        });
     }
 }

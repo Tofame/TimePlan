@@ -222,6 +222,7 @@
                     const div = document.createElement("div");
                     div.className = "activity";
                     div.dataset.activityId = activity.id;
+                    div.dataset.groupId = activity.groupId;
 
                     doEasterEgg(activity, div);
 
@@ -235,7 +236,8 @@
                         Subject Code: ${activity.subject?.codeName || 'N/A'}<br>
                         ETCS: ${activity.subject?.etcs || 'N/A'}<br>
                         Students: <span class="student-count">Loading...</span><br>
-                        Type: ${activity.type || 'N/A'}<br>
+                        Type: <span class="activity-type-element">Loading...</span><br>
+                        Group: <span class="activity-group-element">Loading...</span><br>
                         Start: ${start.toLocaleString()}<br>
                         End: ${calculateEndTime(activity.startTime, activity.duration || 0).toLocaleTimeString()}<br>
                         Duration: ${formatDuration(activity.duration || 0)}
@@ -350,9 +352,16 @@
             !activityEl.dataset.fetched
         ) {
             const span = activityEl.querySelector('.student-count');
+            const activityTypeSpan = activityEl.querySelector('.activity-type-element');
+            const activityGroupSpan = activityEl.querySelector('.activity-group-element');
             activityEl.dataset.fetching = "true"; // Prevent duplicates
 
             try {
+                const groupInfoRes = await fetch(`/data/activitiesGroups/${activityEl.dataset.groupId}`)
+                const groupInfo = await groupInfoRes.json();
+                activityTypeSpan.textContent = groupInfo.type || 'N/A';
+                activityGroupSpan.textContent = groupInfo.groupNumber || 'N/A';
+
                 const res = await fetch(`/data/activities/${activityEl.dataset.activityId}/studentCount`);
                 const count = await res.json();
                 span.textContent = count || 'N/A';
