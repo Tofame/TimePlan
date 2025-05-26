@@ -4,30 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         body {
-            font-family: sans-serif;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            background: #f9f9f9;
+            color: #333;
         }
 
         h1 {
             text-align: center;
+            font-size: 2em;
         }
 
         section {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 30px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            cursor: pointer;
+            background: #f0f0f0;
+            padding: 15px 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header:hover {
+            background: #e0e0e0;
+        }
+
+        .section-content {
+            padding: 15px 20px;
+            display: none;
+        }
+
+        .active .section-content {
+            display: block;
         }
 
         form {
             margin-top: 10px;
         }
 
-        input, button {
-            padding: 6px;
-            margin: 4px;
+        input, button, select {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+
+        button {
+            background: #2e5ca6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
         }
 
         ul {
@@ -36,141 +83,158 @@
         }
 
         li {
-            border-bottom: 1px solid #ddd;
-            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
         }
 
         .delete-btn {
             margin-left: 10px;
-            color: red;
+            color: #fffa70;
             cursor: pointer;
         }
 
         .scrollable {
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
             border: 1px solid #ccc;
             padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
         }
     </style>
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <!-- Flatpickr JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
+
 <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 <script>
     new Darkmode().showWidget();
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.parentElement;
+                section.classList.toggle('active');
+            });
+        });
+    });
 </script>
 
-<h1>Admin Panel</h1>
+<h1>🛠️ Admin Panel</h1>
 
 <!-- GROUPS -->
 <section>
-    <h2>Activity Groups</h2>
-    <form id="add-group-form">
-        <input type="hidden" name="id" />
-        <label for="typeActivity">Activity Type:</label>
-        <input type="number" id="typeActivity" name="type" placeholder="Type (0 - Lesson, 1 - Lecture)" required min="0" max="1" />
-        <label for="groupNumber">Group Number:</label>
-        <input type="number" id="groupNumber" name="groupNumber" placeholder="Group Number" required min="0" />
-        <button type="submit" id="group-submit-btn">Add Group</button>
-        <button type="button" id="group-cancel-btn" style="display:none;">Cancel</button>
-    </form>
-    <ul id="groups-list" class="scrollable"></ul>
+    <div class="section-header">👥 Activity Groups</div>
+    <div class="section-content">
+        <form id="add-group-form">
+            <input type="hidden" name="id" />
+            <label>Activity Type:</label>
+            <input type="number" id="typeActivity" name="type" placeholder="0=Lesson, 1=Lecture" required min="0" max="1" />
+            <label>Group Number:</label>
+            <input type="number" id="groupNumber" name="groupNumber" required min="0" />
+            <button type="submit" id="group-submit-btn">Add Group</button>
+            <button type="button" id="group-cancel-btn" style="display:none;">Cancel</button>
+        </form>
+        <ul id="groups-list" class="scrollable"></ul>
+    </div>
 </section>
 
 <!-- TEACHERS -->
 <section>
-    <h2>Teachers</h2>
-    <form id="add-teacher-form">
-        <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
-        <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="title" placeholder="Title" />
-        <input type="date" name="birthDate" required />
-        <button type="submit" id="teacher-submit-btn">Add Teacher</button>
-        <button type="button" id="teacher-cancel-btn" style="display:none;">Cancel</button>
-    </form>
-    <ul id="teachers-list" class="scrollable"></ul>
+    <div class="section-header">👨‍🏫 Teachers</div>
+    <div class="section-content">
+        <form id="add-teacher-form">
+            <input type="hidden" name="id" />
+            <input type="text" name="name" placeholder="Name" required />
+            <input type="text" name="title" placeholder="Title" />
+            <input type="date" name="birthDate" required />
+            <button type="submit" id="teacher-submit-btn">Add Teacher</button>
+            <button type="button" id="teacher-cancel-btn" style="display:none;">Cancel</button>
+        </form>
+        <ul id="teachers-list" class="scrollable"></ul>
+    </div>
 </section>
 
 <!-- STUDENTS -->
 <section>
-    <h2>Students</h2>
-    <form id="add-student-form">
-        <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
-        <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="studentIndex" placeholder="Student Index" required />
-        <input type="text" id="studentPassword" name="studentPassword" placeholder="password" required />
-        <select name="groupLessonId" id="group-lesson-select"></select>
-        <select name="groupLectureId" id="group-lecture-select"></select>
-        <button type="submit" id="student-submit-btn">Add Student</button>
-        <button type="button" id="student-cancel-btn" style="display:none;">Cancel</button>
-    </form>
-    <ul id="students-list" class="scrollable"></ul>
+    <div class="section-header">🎓 Students</div>
+    <div class="section-content">
+        <form id="add-student-form">
+            <input type="hidden" name="id" />
+            <input type="text" name="name" placeholder="Name" required />
+            <input type="text" name="studentIndex" placeholder="Student Index" required />
+            <input type="text" id="studentPassword" name="studentPassword" placeholder="Password" required />
+            <select name="groupLessonId" id="group-lesson-select"></select>
+            <select name="groupLectureId" id="group-lecture-select"></select>
+            <button type="submit" id="student-submit-btn">Add Student</button>
+            <button type="button" id="student-cancel-btn" style="display:none;">Cancel</button>
+        </form>
+        <ul id="students-list" class="scrollable"></ul>
+    </div>
 </section>
 
 <!-- SUBJECTS -->
 <section>
-    <h2>Subjects</h2>
-    <form id="add-subject-form">
-        <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="codeName" placeholder="Code Name" required />
-        <input type="number" name="etcs" placeholder="ETCS" />
-        <button type="submit" id="subject-submit-btn">Add subject</button>
-        <button type="button" id="subject-cancel-btn" style="display:none;">Cancel</button>
-    </form>
-    <ul id="subjects-list" class="scrollable"></ul>
+    <div class="section-header">📘 Subjects</div>
+    <div class="section-content">
+        <form id="add-subject-form">
+            <input type="text" name="name" placeholder="Name" required />
+            <input type="text" name="codeName" placeholder="Code Name" required />
+            <input type="number" name="etcs" placeholder="ETCS" />
+            <button type="submit" id="subject-submit-btn">Add Subject</button>
+            <button type="button" id="subject-cancel-btn" style="display:none;">Cancel</button>
+        </form>
+        <ul id="subjects-list" class="scrollable"></ul>
+    </div>
 </section>
 
 <!-- CLASSROOMS -->
 <section>
-    <h2>Classrooms</h2>
-    <form id="add-classroom-form">
-        <input type="text" name="address" placeholder="Address" required />
-        <button type="submit" id="classroom-submit-btn">Add classroom</button>
-        <button type="button" id="classroom-cancel-btn" style="display:none;">Cancel</button>
-    </form>
-    <ul id="classrooms-list" class="scrollable"></ul>
+    <div class="section-header">🏫 Classrooms</div>
+    <div class="section-content">
+        <form id="add-classroom-form">
+            <input type="text" name="address" placeholder="Address" required />
+            <button type="submit" id="classroom-submit-btn">Add Classroom</button>
+            <button type="button" id="classroom-cancel-btn" style="display:none;">Cancel</button>
+        </form>
+        <ul id="classrooms-list" class="scrollable"></ul>
+    </div>
 </section>
 
 <!-- ACTIVITIES -->
 <section>
-    <h2>Activities</h2>
-    <form id="add-activity-form">
-        <input type="hidden" name="id" />
-        <select name="subject_id"></select>
-        <select name="teacher_id"></select>
-        <select name="classroom_id"></select>
-        <label for="startTime">Start Time:</label>
-        <input type="text" id="startTime" name="startTime" required>
-        <input type="number" name="duration" placeholder="Duration (minutes)" required />
-        <label for="group-id-selector">Group:</label>
-        <select name="groupIdSelector" id="group-id-selector"></select>
-        <button type="submit" id="activity-submit-btn">Add Activity</button>
-        <button type="button" id="activity-cancel-btn" style="display:none;">Cancel</button>
-    </form>
+    <div class="section-header">📅 Activities</div>
+    <div class="section-content">
+        <form id="add-activity-form">
+            <input type="hidden" name="id" />
+            <select name="subject_id"></select>
+            <select name="teacher_id"></select>
+            <select name="classroom_id"></select>
+            <label for="startTime">Start Time:</label>
+            <input type="text" id="startTime" name="startTime" required />
+            <input type="number" name="duration" placeholder="Duration (minutes)" required />
+            <label for="group-id-selector">Group:</label>
+            <select name="groupIdSelector" id="group-id-selector"></select>
+            <button type="submit" id="activity-submit-btn">Add Activity</button>
+            <button type="button" id="activity-cancel-btn" style="display:none;">Cancel</button>
+        </form>
 
-    <!-- Filters and Sorting -->
-    <div style="margin-top: 20px;">
-        <h3>Filter / Sort Activities</h3>
-        <input type="date" id="filter-date" />
-        <input type="text" id="filter-code" placeholder="Subject Code" />
-        <button onclick="applyFilters()">Apply Filter</button>
-        <button onclick="clearFilters()">Clear</button>
-
-        <div style="margin-top: 10px;">
-            <strong>Sort by:</strong>
-            <button onclick="sortActivities('startTime')">Date</button>
-            <button onclick="sortActivities('subject.codeName')">Subject Code</button>
-            <button onclick="sortActivities('duration')">Duration</button>
-            <button onclick="toggleSortDirection()">Toggle ↑↓</button>
+        <div style="margin-top: 20px;">
+            <h3>🔍 Filter / Sort</h3>
+            <input type="date" id="filter-date" />
+            <input type="text" id="filter-code" placeholder="Subject Code" />
+            <button onclick="applyFilters()">Apply</button>
+            <button onclick="clearFilters()">Clear</button>
+            <div style="margin-top: 10px;">
+                <strong>Sort by:</strong>
+                <button onclick="sortActivities('startTime')">📆 Date</button>
+                <button onclick="sortActivities('subject.codeName')">🔤 Code</button>
+                <button onclick="sortActivities('duration')">⏱️ Duration</button>
+                <button onclick="toggleSortDirection()">↕️ Toggle</button>
+            </div>
         </div>
-    </div>
 
-    <!-- List -->
-    <ul id="activities-list" class="scrollable" style="margin-top: 15px;"></ul>
+        <ul id="activities-list" class="scrollable" style="margin-top: 15px;"></ul>
+    </div>
 </section>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
