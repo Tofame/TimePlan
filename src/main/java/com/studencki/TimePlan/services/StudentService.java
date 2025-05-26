@@ -42,6 +42,7 @@ public class StudentService {
         existing.setStudentIndex(updateStudent.getStudentIndex());
         existing.setGroupLessonId(updateStudent.getGroupLessonId());
         existing.setGroupLectureId(updateStudent.getGroupLectureId());
+        existing.setPassword(updateStudent.getPassword());
         return studentRepository.save(existing);
     }
 

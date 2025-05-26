@@ -97,6 +97,7 @@
         <input type="hidden" name="id" />  <!-- This is for knowing id, so we know what we edit -->
         <input type="text" name="name" placeholder="Name" required />
         <input type="text" name="studentIndex" placeholder="Student Index" required />
+        <input type="text" id="studentPassword" name="studentPassword" placeholder="password" required />
         <select name="groupLessonId" id="group-lesson-select"></select>
         <select name="groupLectureId" id="group-lecture-select"></select>
         <button type="submit" id="student-submit-btn">Add Student</button>
@@ -389,7 +390,7 @@
         });
 
         ul.innerHTML = list.map(s =>
-            `<li>${s.name} (Index: ${s.studentIndex}) — Lesson Group: ${groupMap[s.groupLessonId] ?? 'N/A'}, Lecture Group: ${groupMap[s.groupLectureId] ?? 'N/A'}
+            `<li>${s.name} (Password: ${s.password}, Index: ${s.studentIndex}) — Lesson Group: ${groupMap[s.groupLessonId] ?? 'N/A'}, Lecture Group: ${groupMap[s.groupLectureId] ?? 'N/A'}
             <button class="edit-btn" data-id="${s.id}">Edit</button>
             <button class="delete-btn" data-id="${s.id}" data-type="students">Delete</button></li>`
         ).join("");
@@ -409,7 +410,7 @@
         const data = {
             name: formData.get("name"),
             studentIndex: formData.get("studentIndex"),
-            password: "temp",
+            password: formData.get("studentPassword"),
             groupLessonId: formData.get("groupLessonId") ? Number(formData.get("groupLessonId")) : null,
             groupLectureId: formData.get("groupLectureId") ? Number(formData.get("groupLectureId")) : null,
         };
@@ -454,6 +455,7 @@
                 studentForm.studentIndex.value = student.studentIndex;
                 studentForm.groupLessonId.value = student.groupLessonId || "";
                 studentForm.groupLectureId.value = student.groupLectureId || "";
+                studentForm.studentPassword.value = student.password || "";
                 studentSubmitBtn.textContent = "Update Student";
                 studentCancelBtn.style.display = "inline-block";
             }
