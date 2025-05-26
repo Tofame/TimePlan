@@ -77,9 +77,9 @@ public class ActivityService {
 
     public Activity convertDtoToEntity(ActivityDTO dto) {
         Activity activity = new Activity();
-        activity.setSubject(subjectRepository.findById(dto.getSubject_id()).orElse(null));
-        activity.setTeacher(teacherRepository.findById(dto.getTeacher_id()).orElse(null));
-        activity.setClassroom(classroomRepository.findById(dto.getClassroom_id()).orElse(null));
+        activity.setSubject(subjectRepository.findById(dto.getSubjectId()).orElse(null));
+        activity.setTeacher(teacherRepository.findById(dto.getTeacherId()).orElse(null));
+        activity.setClassroom(classroomRepository.findById(dto.getClassroomId()).orElse(null));
         activity.setStartTime(LocalDateTime.parse(dto.getStartTime()));
         activity.setDuration(dto.getDuration());
         activity.setGroupId(dto.getGroupId() != null ? dto.getGroupId() : 0);

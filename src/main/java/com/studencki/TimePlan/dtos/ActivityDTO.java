@@ -6,9 +6,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ActivityDTO {
-    private Long subject_id;
-    private Long teacher_id;
-    private Long classroom_id;
+    private Long subjectId;
+    private Long teacherId;
+    private Long classroomId;
     private String startTime;
     private int duration;
 

@@ -134,6 +134,7 @@
 <section>
     <h2>Activities</h2>
     <form id="add-activity-form">
+        <input type="hidden" name="id" />
         <select name="subject_id"></select>
         <select name="teacher_id"></select>
         <select name="classroom_id"></select>
@@ -142,7 +143,8 @@
         <input type="number" name="duration" placeholder="Duration (minutes)" required />
         <label for="group-id-selector">Group:</label>
         <select name="groupIdSelector" id="group-id-selector"></select>
-        <button type="submit">Add Activity</button>
+        <button type="submit" id="activity-submit-btn">Add Activity</button>
+        <button type="button" id="activity-cancel-btn" style="display:none;">Cancel</button>
     </form>
 
     <!-- Filters and Sorting -->
@@ -609,25 +611,79 @@
     };
 
     // Activities
-    document.getElementById("add-activity-form").onsubmit = async e => {
+    const activityForm = document.getElementById("add-activity-form");
+    const activitySubmitBtn = document.getElementById("activity-submit-btn");
+    const activityCancelBtn = document.getElementById("activity-cancel-btn");
+
+    function resetActivityForm() {
+        activityForm.reset();
+        activityForm.id.value = "";
+        activitySubmitBtn.textContent = "Add Activity";
+        activityCancelBtn.style.display = "none";
+    }
+
+    activityCancelBtn.onclick = () => resetActivityForm();
+
+    document.getElementById("activities-list").onclick = async e => {
+        if (e.target.classList.contains("edit-btn")) {
+            const id = e.target.dataset.id;
+            const activity = allActivities.find(a => a.id == id);
+
+            if (activity) {
+                //console.log(activity.subject.id + " data classroom " + activity.duration)
+                activityForm.id.value = id;
+                activityForm.querySelector('select[name="subject_id"]').value = activity.subject.id || "";
+                activityForm.querySelector('select[name="teacher_id"]').value = activity.teacher.id || "";
+                activityForm.querySelector('select[name="classroom_id"]').value = activity.classroom.id || "";
+                document.getElementById("startTime").value = activity.startTime;
+                activityForm.querySelector('input[name="duration"]').value = activity.duration || "";
+                activityForm.querySelector('select[name="groupIdSelector"]').value = activity.groupId || "";
+
+                activityForm.subject_id.value = activity.subject.id;
+                activityForm.teacher_id.value = activity.teacher.id;
+                activityForm.classroom_id.value = activity.classroom.id;
+
+                activitySubmitBtn.textContent = "Update Activity";
+                activityCancelBtn.style.display = "inline-block";
+            }
+        }
+    };
+
+    activityForm.onsubmit = async e => {
         e.preventDefault();
         const formData = new FormData(e.target);
+        const id = formData.get("id");
         const data = {
-            subject_id: formData.get("subject_id") ? Number(formData.get("subject_id")) : null,
-            teacher_id: formData.get("teacher_id") ? Number(formData.get("teacher_id")) : null,
-            classroom_id: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
+            subjectId: formData.get("subject_id") ? Number(formData.get("subject_id")) : null,
+            teacherId: formData.get("teacher_id") ? Number(formData.get("teacher_id")) : null,
+            classroomId: formData.get("classroom_id") ? Number(formData.get("classroom_id")) : null,
             startTime: formData.get("startTime"),
             duration: formData.get("duration") ? Number(formData.get("duration")) : null,
             groupId: formData.get("groupIdSelector") ? Number(formData.get("groupIdSelector")) : null,
         };
 
-        await fetch("/data/activities", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
+        // DEBUG print to see the content sent
+        //console.log("Data sent ", data)
+
+        if (id) {
+            // Edit
+            await fetch(`/data/activities/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            // Add
+            await fetch("/data/activities", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
 
         e.target.reset();
+
+        resetActivityForm();
         loadActivities();
 
         // TO-DO reloadDropdown(type) instead of reloading all, for better performance
@@ -699,6 +755,7 @@
           (${a.subject?.codeName || '-'}) — ${new Date(a.startTime).toLocaleString()}
           <br>
           <small>${a.type || ''} with ${a.teacher?.name || 'N/A'} in ${a.classroom?.address || 'N/A'} (${a.duration || 0} mins)</small>
+          <button class="edit-btn" data-id="${a.id}">Edit</button>
           <button class="delete-btn" data-id="${a.id}" data-type="activities">Delete</button>
         `;
             listEl.appendChild(li);

@@ -44,7 +44,8 @@ public class ActivityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Activity> editActivity(@PathVariable Long id, @RequestBody Activity updatedActivity) {
+    public ResponseEntity<Activity> editActivity(@PathVariable Long id, @RequestBody ActivityDTO updatedActivityDTO) {
+        Activity updatedActivity = activityService.convertDtoToEntity(updatedActivityDTO);
         Optional<Activity> activity = activityService.editActivity(id, updatedActivity);
         if (activity.isEmpty()) {
             return ResponseEntity.notFound().build();
