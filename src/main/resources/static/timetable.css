@@ -1,0 +1,76 @@
+body {
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    text-align: center;
+    vertical-align: top;
+    height: 60px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.activity {
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    padding: 4px;
+    font-size: 12px;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.activity .tooltip {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 12px;
+    position: absolute;
+    z-index: 100;
+    bottom: 100%; /* show above */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.activity:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.activity.rainbow {
+    background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+    background-size: 1400% 1400%;
+    animation: rainbow 10s ease infinite;
+    border-color: #fff;
+    color: black;
+}
+
+/* Lets colorize the weekdays to orange cause I like orange */
+#timetable thead th {
+    background-color: orange;
+    color: black;
+}
