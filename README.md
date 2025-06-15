@@ -35,5 +35,5 @@ A **Java Spring Boot** web application for managing and displaying timetables (a
 - Intellij's maven can generate .jar with 'package' option
 - Otherwise the ``compile.bat``, uses spring boot command that also generates .jar
 - Afterward using ``run.bat`` runs that .jar and that's all.
-
+- The sites you can access when its running: /adminpanel.html, /login.html, /timetable.html (redirected to it from login)
 ---
